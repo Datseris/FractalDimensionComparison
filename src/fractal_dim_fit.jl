@@ -4,6 +4,7 @@
 import GLM
 
 function linear_regression_fit_glm(x,y)
+    # `ones` is used here to obtain the value of the intercept
     X = hcat(ones(length(x)), x)
     out = GLM.lm(X, y)
     o, s = GLM.coef(out)

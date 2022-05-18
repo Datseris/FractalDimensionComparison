@@ -1,6 +1,6 @@
 # %% Comparison with analytically resolved models
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimension # exports DynamicalSystems, PyPlot
 include(srcdir("style.jl"))
 
 datas = Vector(undef, 6)
@@ -40,7 +40,7 @@ for i in 1:length(datas)
 
     # Here we simply pack all parameters into a dictionary
     # (other parameters are (probably) globals)
-    params = @strdict N qH qC data 
+    params = @strdict N qH qC data
     if Cmethod ≠ "standard"
         params["Cmethod"] = Cmethod
     end
@@ -64,14 +64,14 @@ end
 legendtitle = "analytically known \$\\Delta\$"
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
 
     # For this plot we use standard regression fit because
     # the estimate is already so accurate, we don't want to
-    # have the unecessary larger confidence intervals from the 
+    # have the unecessary larger confidence intervals from the
     # logarithmic correction
-    dimension_fit_C = FractalDimension.linear_regression_fit_glm, 
+    dimension_fit_C = FractalDimension.linear_regression_fit_glm,
 )
 
-wsave(plotsdir("paper", "analytic"), fig)
+# wsave(plotsdir("paper", "analytic"), fig)

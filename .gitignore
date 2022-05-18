@@ -9,6 +9,8 @@ notebooks
 _research
 data
 *.pptx
+paper/feedback
+*.docx
 
 ################################################################################
 #                                    Julia                                     #
