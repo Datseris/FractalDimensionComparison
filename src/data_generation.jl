@@ -1,10 +1,25 @@
+#=
+This module provides defines functions that generate the datasets
+that are then used to calculate fractal dimensions.
+The module is structured around functions which accept only keywords,
+and always initialize and return a `Dataset`, by convention always given to
+`standardize`. To add new datasets, simply create a new function here.
+All functions use the `N` keyword, which is the length of the dataset.
+Notice that you can easily also load data from CSV files or so, like
+done in the function `experimental_data`.
+
+These functions are used in e.g., the file `make_C_H.jl`, like so:
+```
+data = :kaplanyorke_map # This must be a `Symbol`
+data_producing_function = getfield(Data, data)
+X = data_producing_function(; dict2ntuple(params)...)
+```
+=#
 module Data
 
 using DrWatson
-using Random, Statistics
-using DynamicalSystems, OrdinaryDiffEq, LinearAlgebra
-using DelimitedFiles, DrWatson
-using StochasticDiffEq
+using Random, Statistics, DelimitedFiles, LinearAlgebra
+using DynamicalSystems, OrdinaryDiffEq, StochasticDiffEq
 
 # default constants used if no other is given
 const default_N = 10000
@@ -78,7 +93,7 @@ function roessler_dynamic(; N = default_N, Δt = 0.2, η=0.1, kwargs...)
     # using the SDE solve from DifferentialEquations here
     tspan = (0.0, N*Δt + 100)
     prob_sde_roessler = SDEProblem(
-        roessler_dynoise, σ_roessler_dynoise, [0.1, -0.2, 0.1], 
+        roessler_dynoise, σ_roessler_dynoise, [0.1, -0.2, 0.1],
         tspan, [0.2, 0.2, 5.7, η]
     )
     saveat = 100.0:Δt:tspan[end]
