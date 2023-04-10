@@ -35,7 +35,7 @@ for i in 1:length(datasets)
     # Here we simply pack all parameters into a dictionary
     # (other parameters are (probably) globals)
     params = @strdict N qH qC data
-    if (data == :lorenz96_chaotic) || (data == :henonheiles_chaotic)
+    if data == :lorenz96_chaotic
         params["D"] = 8
     end
     if Cmethod ≠ "standard"
@@ -45,8 +45,9 @@ for i in 1:length(datasets)
     # This is the main call that calculates everything
     output, s = produce_or_load(
         datadir("main"), params, make_C_H;
-        prefix = string(data), suffix = "jld2", force = false,
+        prefix = string(data), suffix = "jld2",
         ignores = ["data"], storepatch = false,
+        force = data == :coupled_logistics,
     )
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
@@ -59,14 +60,14 @@ fig, axs = mainplot(
     qH, qC, tol = 0.25,
 
     # This chooses the kind of fit we do to the linear region.
-    # The option `FractalDimension.logarithmic_corrected_fit_lsqfit` 
+    # The option `FractalDimension.logarithmic_corrected_fit_lsqfit`
     # is the method suggested by Sprott.
     # The alternative is `FractalDimension.linear_regression_fit_glm`,
     # which is standard linear regression.
     # By default, the correction is only done for the correlation sum method,
-    # because this is what the Sprott paper says, but also because we found 
+    # because this is what the Sprott paper says, but also because we found
     # (by experimentation) that this correction makes the entropy method
-    # less accurate when used. For the correlation sum method the 
+    # less accurate when used. For the correlation sum method the
     # accuracy of the corrected version is indeed better.
 
     # Feel free to experiment by altering any of these two:
@@ -74,4 +75,4 @@ fig, axs = mainplot(
     dimension_fit_H = FractalDimension.linear_regression_fit_glm,
 )
 
-wsave(plotsdir("paper", "different_systems_$N"), fig)
+# wsave(plotsdir("paper", "different_systems_$N"), fig)

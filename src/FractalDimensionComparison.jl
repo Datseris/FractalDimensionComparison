@@ -1,8 +1,8 @@
-module FractalDimension
+module FractalDimensionComparison
 
 using DrWatson
 using Reexport
-@reexport using DynamicalSystems, PyPlot, Statistics
+@reexport using DynamicalSystems, CairoMakie, Statistics
 
 include("fractal_dim_fit.jl")
 

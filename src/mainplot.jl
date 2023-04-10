@@ -7,7 +7,7 @@ niceloc = matplotlib.ticker.MaxNLocator(nbins=4)
 function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         qH = 1, qC = 2, tol = 0.25, offsets = zeros(length(Hs)),
         dimension_fit_H = linear_regression_fit_glm,
-        dimension_fit_C = logarithmic_corrected_fit_lsqfit, 
+        dimension_fit_C = logarithmic_corrected_fit_lsqfit,
     )
 
     fig, axs = subplots(2,1; sharex = true)
@@ -20,6 +20,16 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         eC = eCs isa Vector{<:AbstractVector} ? eCs[j] : eCs
         color = "C$(j-1)"
 
+        C = Cs[j]
+        i = findfirst(z -> z > 0, C)
+        x, y = log.(eC)[i:end], log.(C)[i:end]
+        is, d = linear_region(x, y; tol, warning = false)
+        Δ, Δ05, Δ95 = dimension_fit_C(x[is[1]:is[2]], y[is[1]:is[2]])
+        Clabel = "\$$(rdspl(Δ05)), $(rdspl(Δ95))\$"
+        axs[2].plot(x, y .+ z, zorder = 1, color, ls = LINESTYLES[j], alpha = 0.9)
+        axs[2].plot(x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Clabel,
+        zorder = 2, ms = 10, marker = MARKERS[j], ls = "None", color = color, alpha = 0.75)
+
         H = Hs[j]
         x, y = log.(eH), -H
         line, = axs[1].plot(x, y .+ z; color, ls = LINESTYLES[j], alpha = 0.9)
@@ -30,15 +40,6 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         axs[1].plot(x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Hlabel,
         zorder = 2, ms = 10, marker = MARKERS[j], ls = "None", color = color, alpha = 0.75)
 
-        C = Cs[j]
-        i = findfirst(z -> z > 0, C)
-        x, y = log.(eC)[i:end], log.(C)[i:end]
-        is, d = linear_region(x, y; tol, warning = false)
-        Δ, Δ05, Δ95 = dimension_fit_C(x[is[1]:is[2]], y[is[1]:is[2]])
-        Clabel = "\$$(rdspl(Δ05)), $(rdspl(Δ95))\$"
-        axs[2].plot(x, y .+ z, zorder = 1, color, ls = LINESTYLES[j], alpha = 0.9)
-        axs[2].plot(x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Clabel,
-        zorder = 2, ms = 10, marker = MARKERS[j], ls = "None", color = color, alpha = 0.75)
         yield()
     end
 

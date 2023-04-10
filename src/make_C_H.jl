@@ -1,3 +1,6 @@
+# TODO: Incorporate `produce_or_load` here, so that C is not recomputed if only
+# H changes, or vice versa
+
 """
     make_C_H(params)
 Generate the values of C (correlation sum) and H (generalized entropy) for the given
@@ -46,10 +49,11 @@ function make_C_H(params)
     @time H = genentropy.(Ref(X), eH; q = qH)
 
     # Theiler window
-    if !haskey(params, "theiler")
+    if !haskey(params, "theiler") || isnothing(params["theiler"])
         cols = columns(X)
         theiler = maximum(estimate_delay(x, "mi_min") for x in cols)
         theiler = clamp(theiler, 0, 100) # safety
+        @show theiler
     else
         theiler = params["theiler"]
     end
