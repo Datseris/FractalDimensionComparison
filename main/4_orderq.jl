@@ -1,8 +1,7 @@
 # %% Sensititivy to trajectory length
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
-using DynamicalSystems, PyPlot
 
 # %%
 N = 1*10^5
@@ -45,8 +44,8 @@ legendtitle = "impact of order \$q\$"
 labels = [s*" \$q=$(q)\$" for s in slabels for q in qs]
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH = "q", qC = "q", tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH = "q", qC = "q", tol = 0.25,
     offsets = range(0; length = 6, step = 1.5),
     dimension_fit_C = FractalDimension.linear_regression_fit_glm,
 )

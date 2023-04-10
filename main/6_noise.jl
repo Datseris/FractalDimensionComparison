@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 N = 1*10^5
@@ -54,8 +54,8 @@ labels = ["none", "5% additive", "10% additive", "5% dynamic", "10% dynamic", "r
 legendtitle = "noise"
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
     # offsets = range(0; length = 6, step = 2),
     # dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
     dimension_fit_C = FractalDimension.linear_regression_fit_glm,

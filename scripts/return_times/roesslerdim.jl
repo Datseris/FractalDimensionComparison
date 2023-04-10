@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 using DynamicalSystems, PyPlot, Statistics
 include(srcdir("style.jl"))
 

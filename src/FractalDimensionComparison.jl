@@ -2,7 +2,7 @@ module FractalDimensionComparison
 
 using DrWatson
 using Reexport
-@reexport using DynamicalSystems, CairoMakie, Statistics
+@reexport using FractalDimensions, CairoMakie, Statistics
 
 include("fractal_dim_fit.jl")
 
@@ -20,7 +20,7 @@ using Statistics: mean
 rmse(x, y) = sqrt(mse(x, y))
 export rmse
 
-include("style.jl") # this doesn't work with `@quickactivate` for some reason
+include("theme.jl")
 include("mainplot.jl")
 
 end

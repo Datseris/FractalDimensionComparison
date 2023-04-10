@@ -1,8 +1,4 @@
-using PyPlot
-import LsqFit
 export mainplot, estimate_embedding_plot
-
-niceloc = matplotlib.ticker.MaxNLocator(nbins=4)
 
 function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         qH = 1, qC = 2, tol = 0.25, offsets = zeros(length(Hs)),
@@ -10,7 +6,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         dimension_fit_C = logarithmic_corrected_fit_lsqfit,
     )
 
-    fig, axs = subplots(2,1; sharex = true)
+    fig, axs = subplotgrid(2, 1; sharex = true)
 
     llines = []
     for j in 1:length(Hs)
@@ -18,27 +14,30 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         z = offsets[j]
         eH = eHs isa Vector{<:AbstractVector} ? eHs[j] : eHs
         eC = eCs isa Vector{<:AbstractVector} ? eCs[j] : eCs
-        color = "C$(j-1)"
+        color = Cycled(j)
 
         C = Cs[j]
         i = findfirst(z -> z > 0, C)
         x, y = log.(eC)[i:end], log.(C)[i:end]
         is, d = linear_region(x, y; tol, warning = false)
         Δ, Δ05, Δ95 = dimension_fit_C(x[is[1]:is[2]], y[is[1]:is[2]])
-        Clabel = "\$$(rdspl(Δ05)), $(rdspl(Δ95))\$"
-        axs[2].plot(x, y .+ z, zorder = 1, color, ls = LINESTYLES[j], alpha = 0.9)
-        axs[2].plot(x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Clabel,
-        zorder = 2, ms = 10, marker = MARKERS[j], ls = "None", color = color, alpha = 0.75)
+
+        # TODO: correct transparency
+        Clabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
+        lines!(axs[2], x, y .+ z; color, ls = LINESTYLES[j], alpha = 0.9)
+        scatter!(axs[2], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z; label = Clabel,
+            markersize = 10, marker = MARKERS[j], color = color, alpha = 0.75
+        )
 
         H = Hs[j]
         x, y = log.(eH), -H
-        line, = axs[1].plot(x, y .+ z; color, ls = LINESTYLES[j], alpha = 0.9)
+        line = lines!(axs[1], x, y .+ z; color, ls = LINESTYLES[j], alpha = 0.9)
         push!(llines, line)
         is, d = linear_region(x, y; tol, warning = false)
         Δ, Δ05, Δ95 = dimension_fit_H(x[is[1]:is[2]], y[is[1]:is[2]])
-        Hlabel = "\$$(rdspl(Δ05)), $(rdspl(Δ95))\$"
-        axs[1].plot(x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Hlabel,
-        zorder = 2, ms = 10, marker = MARKERS[j], ls = "None", color = color, alpha = 0.75)
+        Hlabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
+        scatter!(axs[1], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Hlabel,
+        zorder = 2, ms = 10, marker = MARKERS[j], color = color, alpha = 0.75)
 
         yield()
     end
@@ -56,9 +55,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
     )
 
     for ax in axs
-        ax.legend(;ncol = 3, handlelength = 0.2)
-        # This throws ReadOnlyMemoryError for some reason...
-        # axs[1].get_yaxis().set_major_locator(niceloc)
+        ax.legend(; ncol = 3, handlelength = 0.2)
     end
     axs[1].add_artist(leg)
     fig.tight_layout(pad = 0.25)

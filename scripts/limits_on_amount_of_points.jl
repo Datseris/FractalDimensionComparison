@@ -1,6 +1,6 @@
 # %% Estimation of least amount of points to get dimension
 using DrWatson
-@quickactivate :FractalDimension # exports DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison
 include(srcdir("style.jl"))
 using SpecialFunctions
 

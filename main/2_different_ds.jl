@@ -1,6 +1,6 @@
 # %% Comparison with analytically resolved models
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 datasets = Vector(undef, 6)

@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate "FractalDimension" # uses DynamicalSystems, PyPlot
+@quickactivate "FractalDimension"
 include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot
 using ProgressMeter, Statistics

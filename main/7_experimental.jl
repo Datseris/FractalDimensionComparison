@@ -1,16 +1,16 @@
 # %% Fractal dimension of experimental datasets
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 names = String[
     "electrochemical1", "electrochemical2", "shinriki1",
-    "roessler_embed",  "doublependulum", 
+    "roessler_embed",  "doublependulum",
     # "roessler_all", # doesn't make sense to use 28 dimensional data...
 ]
 labels = String[
     "electroch. 1", "electroch. 2", "Shinriki",
-    "Rössler Net",  "Double pend.", 
+    "Rössler Net",  "Double pend.",
     # "Rössler all",
 ]
 
@@ -49,8 +49,8 @@ end
 legendtitle = "experimental data"
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
     offsets = range(0; length = 6, step = 2),
     # dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
     dimension_fit_C = FractalDimension.linear_regression_fit_glm,

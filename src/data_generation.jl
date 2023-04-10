@@ -1,5 +1,5 @@
 #=
-This module provides defines functions that generate the datasets
+This module provides functions that generate the datasets
 that are then used to calculate fractal dimensions.
 The module is structured around functions which accept only keywords,
 and always initialize and return a `StateSpaceSet`, by convention always given to
@@ -157,7 +157,7 @@ end
 function koch(; maxk = 7, kwargs...)
     flakepoints = SVector{2}.([[0.0; 0.0], [0.5; sqrt(3)/2], [1; 0.0], [0.0; 0.0]])
     function innerkoch(points, maxk, α = sqrt(3)/2)
-        Q = @SMatrix [0 -1; 1 0]
+        Q = SMatrix(0, 1, -1, 0)
         for k = 1:maxk
             n = length(points)
             new_points = eltype(points)[]
@@ -222,7 +222,6 @@ end
     while p < 0; p += 2π; end
     return SVector(theta, p)
 end
-@inbou
 function standardmap_chaotic(; N = default_N, k = 64.0, kwargs...)
     ds = DeterministicIteratedMap(standardmap_rule, [0.08152, 0.122717], [k])
     tr, = trajectory(ds, N; Ttr = 100)

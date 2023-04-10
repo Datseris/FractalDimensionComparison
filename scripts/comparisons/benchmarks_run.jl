@@ -1,6 +1,6 @@
 # Produce benchmarks comparing all functions with each other
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 using BenchmarkTools, Statistics
 
@@ -49,7 +49,7 @@ function create_times(X)
     upper_large = log(base, εmax)
     upper_small = log(base, r0)
     lower = log(base, ε0)
-    
+
     small_range = float(base) .^ range(lower+1, upper_small; length = k)
     if !issorted(small_range)
         println("small range not sorted")

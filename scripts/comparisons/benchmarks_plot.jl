@@ -1,6 +1,6 @@
 # Produce benchmarks comparing all functions with each other
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 file = wload(datadir("benchmarks", "benchmarks.jld2"))
@@ -11,7 +11,7 @@ BN = log10.(BN) # better to display timings in log scale
 fig, axs = subplots(2,1)
 
 for (i, m) in enumerate(methods)
-    axs[1].plot(log10.(Ns), BN[:, i]; 
+    axs[1].plot(log10.(Ns), BN[:, i];
     label = m, ls = LINESTYLES[i], alpha = 0.9, marker = MARKERS[i], ms = 8)
     axs[2].plot(Ds, BD[:, i], ls = LINESTYLES[i], alpha = 0.9, marker = MARKERS[i], ms = 8)
 end

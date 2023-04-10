@@ -1,6 +1,6 @@
 # Produce benchmarks comparing all functions with each other
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 file = wload(datadir("benchmarks", "benchmarks.jld2"))

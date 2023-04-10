@@ -1,7 +1,7 @@
 # %% Sensititivy to trajectory length
 using DrWatson
-@quickactivate "FractalDimension" # uses DynamicalSystems, PyPlot
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate "FractalDimension"
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 D = 8
@@ -45,8 +45,8 @@ end
 legendtitle = "impact of length \$N\$ (Lorenz96 system, \$D\$=$D)"
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
     # dimension_fit_C = FractalDimension.linear_regression_fit_glm,
     dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
     offsets = range(0; length = 6, step = 1.5)
@@ -82,8 +82,8 @@ end
 legendtitle = "impact of length \$N\$ (Towel map, \$D\$=3)"
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
     dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
     offsets = 0:5
 )
@@ -117,8 +117,8 @@ end
 legendtitle = "impact of length \$N\$ (experimental data)"
 
 fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
     dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
     offsets = range(0; length = 6, step = 1.5)
 )

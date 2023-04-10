@@ -3,7 +3,7 @@ This file uses the Kaplan Yorke dimension to provide high accuracy estimates for
 the fractal dimension for the Lorenz-96 system.
 =#
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 using DynamicalSystems, Statistics, OrdinaryDiffEq
 
 Dmax = 13

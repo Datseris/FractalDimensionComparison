@@ -4,7 +4,7 @@ extract the "fractal dimension", the slope of some quantity vs ε
 =#
 
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 using DynamicalSystems, PyPlot
 

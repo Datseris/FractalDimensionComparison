@@ -1,6 +1,6 @@
 # %% Calculating Kaplan Yorke dimensions for as many systems as possible
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 # Time to evolve for reaching convergence

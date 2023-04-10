@@ -3,7 +3,7 @@ This script generates the "pitfall" data from raw input data
 =#
 
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 using DelimitedFiles
 
