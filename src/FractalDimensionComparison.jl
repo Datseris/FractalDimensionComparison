@@ -20,7 +20,6 @@ using Statistics: mean
 rmse(x, y) = sqrt(mse(x, y))
 export rmse
 
-include("theme.jl")
-include("mainplot.jl")
+include("vis/theme.jl")
 
 end

@@ -1,7 +1,7 @@
 # %% Comparison with analytically resolved models
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-include(srcdir("style.jl"))
+# include(srcdir("vis", "theme.jl"))
 
 datas = Vector(undef, 6)
 labels = Vector{String}(undef, 6)
@@ -50,10 +50,12 @@ for i in 1:length(datas)
     end
 
     # This is the main call that calculates everything
+
     output, s = produce_or_load(
         datadir("main"), params, make_C_H;
+        filename = params -> savename(params; ignores = ["data"]),
         prefix = string(data), suffix = "jld2", force = false,
-        ignores = ["data"], storepatch = false,
+        storepatch = false,
     )
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
@@ -63,7 +65,7 @@ end
 # Do the actual plot
 legendtitle = "analytically known \$\\Delta\$"
 
-fig, axs = mainplot(
+fig = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
     qH, qC, tol = 0.25,
 
@@ -71,7 +73,7 @@ fig, axs = mainplot(
     # the estimate is already so accurate, we don't want to
     # have the unecessary larger confidence intervals from the
     # logarithmic correction
-    dimension_fit_C = FractalDimension.linear_regression_fit_glm,
+    dimension_fit_C = linear_regression_fit_glm,
 )
 
 # wsave(plotsdir("paper", "analytic"), fig)

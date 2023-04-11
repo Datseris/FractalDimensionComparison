@@ -1,9 +1,39 @@
+export linear_regression_fit_linalg
+export linear_regression_fit_glm
+export linear_regression_fit_lsqfit
+export logarithmic_corrected_fit_lsqfit
+using Statistics: std
+using Distributions: TDist, cdf
+using FractalDimensions: linreg
+
+#########################################################################################
+# Simplest linear fit via linear algebra
+#########################################################################################
+function linear_regression_fit_linalg(x, y)
+    a, s = linreg(x, y)
+    n = length(y)
+    # CI computed via https://stattrek.com/regression/slope-confidence-interval
+    # standard error of slope
+    yhat = @. a + s*x
+    standard_error = sqrt((sum((y .- yhat).^2) ./ (n - 2))) / sqrt(sum((x .- mean(x)).^2))
+    ci = 0.95 # 95% confidence interval
+    α = 1 - ci
+    pstar = 1 - α/2
+    df = n - 2
+    tdist = TDist(df)
+    critical_value = cdf(tdist, pstar)
+    margin_of_error = critical_value * standard_error
+    s05 = s - margin_of_error
+    s95 = s + margin_of_error
+    return s, s05, s95
+end
+
 #########################################################################################
 # Linear fit with GLM
 #########################################################################################
 import GLM
 
-function linear_regression_fit_glm(x,y)
+function linear_regression_fit_glm(x, y)
     # `ones` is used here to obtain the value of the intercept
     X = hcat(ones(length(x)), x)
     out = GLM.lm(X, y)
@@ -23,8 +53,6 @@ end
 # Linear fit with LsqFit
 #########################################################################################
 import LsqFit
-
-linearregression(x, p) = @. p[1] + p[2]*x #+ p[3]*log(-x)
 
 function linear_regression_fit_lsqfit(x,y, p0 = [0.0, 0.0])
     linearregression(x, p) = @. p[1] + p[2]*x
