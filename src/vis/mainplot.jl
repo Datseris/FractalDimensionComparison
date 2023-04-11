@@ -32,7 +32,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         push!(llines, line)
         region, d = linear_region(x, y; tol, warning = false)
         Δ, Δ05, Δ95 = dimension_fit_H(x[region], y[region])
-        Hlabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
+        Hlabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
         scatter!(axs[1], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
             label = Hlabel, alpha = 0.75
         )
@@ -43,7 +43,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         x, y = log.(eC)[i:end], log.(C)[i:end]
         region, d = linear_region(x, y; tol, warning = false)
         Δ, Δ05, Δ95 = dimension_fit_C(x[region], y[region])
-        Clabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
+        Clabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
         lines!(axs[2], x, y .+ z; alpha = 0.9)
         scatter!(axs[2], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
             label = Clabel, alpha = 0.75
@@ -57,13 +57,14 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
     axs[2].xlabel = L"\log(\varepsilon)"
 
     for ax in axs
-        axislegend(ax; nbanks = 3, patchsize=(20f0,20), position = :lt)
+        axislegend(ax; nbanks = 3, patchsize=(10f0,20), position = :lt, groupgap = 8)
     end
 
     # Make the informative legend
     leg = Legend(fig[0, :], llines, labels, legendtitle;
         nbanks=3, patchsize=(40f0,20),
     )
+    rowgap!(fig.layout, 10)
     space_out_legend!(leg)
     display(fig) # in this project we always want to display the created figure
     return fig

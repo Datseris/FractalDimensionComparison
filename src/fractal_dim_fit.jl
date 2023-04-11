@@ -73,7 +73,7 @@ function logarithmic_corrected_fit_lsqfit(x, y, p0 = [0.0, 0.0, 0.0])
     i = findlast(<(0), x)
     if (!isnothing(i) && i < length(x)÷2)
         @info "More than half of the data have log(ε) > 0 for corrected version. Returning standard linear..."
-        return linear_regression_fit_glm(x,y)
+        return linear_regression_fit_linalg(x,y)
     elseif !isnothing(i)
         x2 = x[1:i]
         y2 = y[1:i]
@@ -83,7 +83,7 @@ function logarithmic_corrected_fit_lsqfit(x, y, p0 = [0.0, 0.0, 0.0])
     end
     if !all(x2 .< 0)
         @info "There still exist positive log(ε) for corrected version. Using standard linear..."
-        return linear_regression_fit_glm(x,y)
+        return linear_regression_fit_linalg(x,y)
     end
     try
         fit = LsqFit.curve_fit(corrected_fit, x2, y2, p0)
@@ -92,6 +92,6 @@ function logarithmic_corrected_fit_lsqfit(x, y, p0 = [0.0, 0.0, 0.0])
         return s, s05, s95
     catch err
         @info "Corrected version errored with $(err). Using standard linear..."
-        return linear_regression_fit_glm(x,y)
+        return linear_regression_fit_linalg(x,y)
     end
 end

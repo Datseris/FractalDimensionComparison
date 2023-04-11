@@ -47,7 +47,7 @@ fig, axs = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
     qH = "q", qC = "q", tol = 0.25,
     offsets = range(0; length = 6, step = 1.5),
-    dimension_fit_C = FractalDimension.linear_regression_fit_glm,
+    dimension_fit_C = FractalDimension.linear_regression_fit_linalg,
 )
 
 wsave(plotsdir("paper", "orderq"), fig)

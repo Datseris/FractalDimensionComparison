@@ -62,7 +62,7 @@ fig, axs = mainplot(
     # This chooses the kind of fit we do to the linear region.
     # The option `FractalDimension.logarithmic_corrected_fit_lsqfit`
     # is the method suggested by Sprott.
-    # The alternative is `FractalDimension.linear_regression_fit_glm`,
+    # The alternative is `FractalDimension.linear_regression_fit_linalg`,
     # which is standard linear regression.
     # By default, the correction is only done for the correlation sum method,
     # because this is what the Sprott paper says, but also because we found
@@ -72,7 +72,7 @@ fig, axs = mainplot(
 
     # Feel free to experiment by altering any of these two:
     dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
-    dimension_fit_H = FractalDimension.linear_regression_fit_glm,
+    dimension_fit_H = FractalDimension.linear_regression_fit_linalg,
 )
 
 # wsave(plotsdir("paper", "different_systems_$N"), fig)

@@ -58,7 +58,7 @@ fig, axs = mainplot(
     qH, qC, tol = 0.25,
     # offsets = range(0; length = 6, step = 2),
     # dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
-    dimension_fit_C = FractalDimension.linear_regression_fit_glm,
+    dimension_fit_C = FractalDimension.linear_regression_fit_linalg,
 )
 
 

@@ -1,7 +1,6 @@
 # %% Comparison with analytically resolved models
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-# include(srcdir("vis", "theme.jl"))
 
 datas = Vector(undef, 6)
 labels = Vector{String}(undef, 6)
@@ -72,7 +71,7 @@ fig = mainplot(
     # the estimate is already so accurate, we don't want to
     # have the unecessary larger confidence intervals from the
     # logarithmic correction
-    dimension_fit_C = linear_regression_fit_glm,
+    dimension_fit_C = linear_regression_fit_linalg,
 )
 
 # wsave(plotsdir("paper", "analytic"), fig)

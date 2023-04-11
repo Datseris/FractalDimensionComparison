@@ -28,5 +28,6 @@ function __init__()
     update_theme!(;
         resolution = (figwidth, figheight),
         Lines = (cycle = Cycle([:color, :linestyle], covary = true), ),
+        Scatter = (cycle = Cycle([:color, :marker], covary = true), markersize = 20),
     )
 end
