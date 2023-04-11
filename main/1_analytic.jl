@@ -50,7 +50,6 @@ for i in 1:length(datas)
     end
 
     # This is the main call that calculates everything
-
     output, s = produce_or_load(
         datadir("main"), params, make_C_H;
         filename = params -> savename(params; ignores = ["data"]),
@@ -63,7 +62,7 @@ end
 
 
 # Do the actual plot
-legendtitle = "analytically known \$\\Delta\$"
+legendtitle = "analytically known Δ"
 
 fig = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
@@ -73,7 +72,7 @@ fig = mainplot(
     # the estimate is already so accurate, we don't want to
     # have the unecessary larger confidence intervals from the
     # logarithmic correction
-    dimension_fit_C = linear_regression_fit_glm,
+    dimension_fit_C = linear_regression_fit_linalg,
 )
 
 # wsave(plotsdir("paper", "analytic"), fig)

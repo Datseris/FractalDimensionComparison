@@ -12,14 +12,15 @@ using FractalDimensions: linreg
 function linear_regression_fit_linalg(x, y)
     a, s = linreg(x, y)
     n = length(y)
+    @show n # TODO: This is wrong!
     # CI computed via https://stattrek.com/regression/slope-confidence-interval
     # standard error of slope
+    df = max(n - 2, 1)
     yhat = @. a + s*x
-    standard_error = sqrt((sum((y .- yhat).^2) ./ (n - 2))) / sqrt(sum((x .- mean(x)).^2))
+    standard_error = sqrt((sum((y .- yhat).^2) ./ df)) / sqrt(sum((x .- mean(x)).^2))
     ci = 0.95 # 95% confidence interval
     α = 1 - ci
     pstar = 1 - α/2
-    df = n - 2
     tdist = TDist(df)
     critical_value = cdf(tdist, pstar)
     margin_of_error = critical_value * standard_error

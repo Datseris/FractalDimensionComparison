@@ -9,7 +9,7 @@ rdspl(x::AbstractVector, n = 2) = Tuple((round.(Float64.(x); sigdigits=n)))
 
 function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         qH = 1, qC = 2, tol = 0.25, offsets = zeros(length(Hs)),
-        dimension_fit_H = linear_regression_fit_glm,
+        dimension_fit_H = linear_regression_fit_linalg,
         dimension_fit_C = logarithmic_corrected_fit_lsqfit,
     )
 
@@ -21,8 +21,9 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         z = offsets[j]
         eH = eHs isa Vector{<:AbstractVector} ? eHs[j] : eHs
         eC = eCs isa Vector{<:AbstractVector} ? eCs[j] : eCs
-        color = Cycled(j)
 
+        # Notice that these plots use Makie's cycling with the current
+        # plottheme. This means that colors, markers, and linestyles, are cycled.
         C = Cs[j]
         i = findfirst(z -> z > 0, C)
         x, y = log.(eC)[i:end], log.(C)[i:end]
@@ -31,20 +32,21 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
 
         # TODO: correct transparency
         Clabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
-        lines!(axs[2], x, y .+ z; color, ls = LINESTYLES[j], alpha = 0.9)
-        scatter!(axs[2], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z; label = Clabel,
-            markersize = 10, marker = MARKERS[j], color = color, alpha = 0.75
+        lines!(axs[2], x, y .+ z; alpha = 0.9)
+        scatter!(axs[2], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z;
+            label = Clabel, alpha = 0.75
         )
 
         H = Hs[j]
         x, y = log.(eH), -H
-        line = lines!(axs[1], x, y .+ z; color, ls = LINESTYLES[j], alpha = 0.9)
+        line = lines!(axs[1], x, y .+ z; alpha = 0.9)
         push!(llines, line)
         is, d = linear_region(x, y; tol, warning = false)
         Δ, Δ05, Δ95 = dimension_fit_H(x[is[1]:is[2]], y[is[1]:is[2]])
         Hlabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
-        scatter!(axs[1], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z, label = Hlabel,
-        zorder = 2, ms = 10, marker = MARKERS[j], color = color, alpha = 0.75)
+        scatter!(axs[1], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z;
+            label = Hlabel, alpha = 0.75
+        )
 
         yield()
     end
@@ -54,7 +56,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
     axs[2].xlabel = L"\log(\varepsilon)"
 
     for ax in axs
-        axislegend(ax; nbanks = 3, patchsize=(20f0,20),)
+        axislegend(ax; nbanks = 3, patchsize=(20f0,20), position = :lt)
     end
 
     # Make the informative legend

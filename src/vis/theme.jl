@@ -26,6 +26,7 @@ figheight = 600
 function __init__()
     set_theme!(default_theme)
     update_theme!(;
-        resolution = (figwidth, figheight)
+        resolution = (figwidth, figheight),
+        Lines = (cycle = Cycle([:color, :linestyle], covary = true), ),
     )
 end
