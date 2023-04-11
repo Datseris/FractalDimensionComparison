@@ -1,5 +1,4 @@
 export linear_regression_fit_linalg
-export linear_regression_fit_glm
 export linear_regression_fit_lsqfit
 export logarithmic_corrected_fit_lsqfit
 using Statistics: std
@@ -12,7 +11,6 @@ using FractalDimensions: linreg
 function linear_regression_fit_linalg(x, y)
     a, s = linreg(x, y)
     n = length(y)
-    @show n # TODO: This is wrong!
     # CI computed via https://stattrek.com/regression/slope-confidence-interval
     # standard error of slope
     df = max(n - 2, 1)
@@ -22,7 +20,7 @@ function linear_regression_fit_linalg(x, y)
     α = 1 - ci
     pstar = 1 - α/2
     tdist = TDist(df)
-    critical_value = cdf(tdist, pstar)
+    critical_value = quantile(tdist, pstar)
     margin_of_error = critical_value * standard_error
     s05 = s - margin_of_error
     s95 = s + margin_of_error
@@ -32,7 +30,10 @@ end
 #########################################################################################
 # Linear fit with GLM
 #########################################################################################
-import GLM
+# This code does exactly the same thing as above, because it also calls the
+# `TDist` with same quantile processing etc. It is kept here as legacy
+
+# import GLM
 
 function linear_regression_fit_glm(x, y)
     # `ones` is used here to obtain the value of the intercept

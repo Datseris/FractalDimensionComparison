@@ -24,28 +24,29 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
 
         # Notice that these plots use Makie's cycling with the current
         # plottheme. This means that colors, markers, and linestyles, are cycled.
-        C = Cs[j]
-        i = findfirst(z -> z > 0, C)
-        x, y = log.(eC)[i:end], log.(C)[i:end]
-        is, d = linear_region(x, y; tol, warning = false)
-        Δ, Δ05, Δ95 = dimension_fit_C(x[is[1]:is[2]], y[is[1]:is[2]])
 
-        # TODO: correct transparency
-        Clabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
-        lines!(axs[2], x, y .+ z; alpha = 0.9)
-        scatter!(axs[2], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z;
-            label = Clabel, alpha = 0.75
-        )
-
+        # Entropy
         H = Hs[j]
         x, y = log.(eH), -H
         line = lines!(axs[1], x, y .+ z; alpha = 0.9)
         push!(llines, line)
-        is, d = linear_region(x, y; tol, warning = false)
-        Δ, Δ05, Δ95 = dimension_fit_H(x[is[1]:is[2]], y[is[1]:is[2]])
+        region, d = linear_region(x, y; tol, warning = false)
+        Δ, Δ05, Δ95 = dimension_fit_H(x[region], y[region])
         Hlabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
-        scatter!(axs[1], x[[is[1], is[end]]], y[[is[1], is[end]]] .+ z;
+        scatter!(axs[1], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
             label = Hlabel, alpha = 0.75
+        )
+
+        # Correlation sum
+        C = Cs[j]
+        i = findfirst(c -> c > 0, C)
+        x, y = log.(eC)[i:end], log.(C)[i:end]
+        region, d = linear_region(x, y; tol, warning = false)
+        Δ, Δ05, Δ95 = dimension_fit_C(x[region], y[region])
+        Clabel = "$(rdspl(Δ05)), $(rdspl(Δ95))"
+        lines!(axs[2], x, y .+ z; alpha = 0.9)
+        scatter!(axs[2], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
+            label = Clabel, alpha = 0.75
         )
 
         yield()

@@ -72,7 +72,7 @@ fig = mainplot(
     # the estimate is already so accurate, we don't want to
     # have the unecessary larger confidence intervals from the
     # logarithmic correction
-    dimension_fit_C = linear_regression_fit_linalg,
+    dimension_fit_C = linear_regression_fit_glm,
 )
 
 # wsave(plotsdir("paper", "analytic"), fig)
