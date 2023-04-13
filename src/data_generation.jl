@@ -48,14 +48,14 @@ end
 end
 function roessler_periodic(; N = default_N, Δt = 0.5, kwargs...)
     c = 3.0; a = 0.2; b = 0.2
-    ds = CoupledODEs(roessler_rule, [0.1, -0.2, 0.1], [a, b, c])
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000, diffeq)
+    ds = CoupledODEs(roessler_rule, [0.1, -0.2, 0.1], [a, b, c]; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000)
     standardize(tr)
 end
 function roessler_chaotic(; η=0, correlated=false, N = default_N, Δt = 0.5, kwargs...)
     c = 5.7; a = 0.2; b = 0.2
-    ds = CoupledODEs(roessler_rule, [0.1, -0.2, 0.1], [a, b, c])
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000, diffeq)
+    ds = CoupledODEs(roessler_rule, [0.1, -0.2, 0.1], [a, b, c]; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000)
     tr = standardize(tr)
     if η ≠ 0 # add static noise
         if !correlated
@@ -114,12 +114,11 @@ end
 function roessler_lorenz(; N = default_N, kwargs...)
     tr1 = roessler_periodic(N = N÷2)
     tr2 = lorenz96_chaotic(; D = 4, N = N÷2)[:, 1:3]
-    tr2 = trajectory(ds, (N/2)*Δt; Δt, Ttr = 1000, diffeq)
     append!(standardize(tr1), standardize(tr2))
 end
 function roessler_sphere(; N = default_N, Δt = 0.5, kwargs...)
-    ds = Systems.roessler([0.1, -0.2, 0.1]; c = 3.0, a = 0.2, b = 0.2)
-    tr1 = standardize(trajectory(ds, (N/2)*Δt; Δt, Ttr = 1000, diffeq))
+    ds = Systems.roessler([0.1, -0.2, 0.1]; c = 3.0, a = 0.2, b = 0.2; diffeq)
+    tr1 = standardize(trajectory(ds, (N/2)*Δt; Δt, Ttr = 1000)[1])
     tr2 = standardize(uniform_sphere(; N = N÷2))
     return append!(tr1, tr2)
 end
@@ -136,8 +135,8 @@ end
 function roessler_nonstationary(; N = default_N, Δt = 0.1, kwargs...)
     u0 = [-5.0, -5.0, 0.0, 3.0] # u0[4] is initial `c` value
     p0 = [0.2, 0.2, (20 - 3)/(N*Δt)]
-    ds = ContinuousDynamicalSystem(roessler_nonstationary_eom, u0, p0)
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 0, diffeq)
+    ds = ContinuousDynamicalSystem(roessler_nonstationary_eom, u0, p0; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 0)
     return standardize(tr)
 end
 
@@ -200,14 +199,14 @@ end
 end
 function henonheiles_quasi(; N = default_N, Δt = 0.2, kwargs...)
     u0 = [0.0, 0.1, 0.5, 0.0]
-    ds = CoupledODEs(henonheiles_rule, u0)
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 100, diffeq)
+    ds = CoupledODEs(henonheiles_rule, u0; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 100)
     standardize(tr)
 end
 function henonheiles_chaotic(; N = default_N, Δt = 0.5, kwargs...)
     u0 = [0.0, -0.25, 0.42081, 0.0]
-    ds = CoupledODEs(henonheiles_rule, u0)
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 100, diffeq)
+    ds = CoupledODEs(henonheiles_rule, u0; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 100)
     standardize(tr)
 end
 
@@ -299,8 +298,8 @@ struct Lorenz96{N} end # Structure for size type
     return nothing
 end
 function lorenz96_chaotic(; N = default_N, Δt = 0.2, D = 4, F = 24.0, kwargs...)
-    ds = CoupledODEs(Lorenz96{D}(), range(0; length = D, step = 0.1), [F])
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000.0, diffeq)
+    ds = CoupledODEs(Lorenz96{D}(), range(0; length = D, step = 0.1), [F]; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000.0)
     standardize(tr)
 end
 function lorenz96_rounded(; digits = 2, kwargs...)
@@ -325,8 +324,8 @@ function lorenz96_nonstationary(; N = default_N, Δt = 0.2, D = 6, F2=24.0, F1=1
     u0 = range(0.1; length = D, step = 0.1)
     dF = (F2-F1)/(N*Δt)
     u0 = [u0..., F1]
-    ds = CoupledODEs(lorenz96_nonstationary_f!, u0, [dF])
-    tr, = trajectory(ds, N*Δt; Δt, Ttr = 0,  diffeq)
+    ds = CoupledODEs(lorenz96_nonstationary_f!, u0, [dF]; diffeq)
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 0)
     standardize(tr)
 end
 function lorenz96_nonstationary_2(; N = default_N, Δt = 0.2, D = 6, F2=40.0, F1=10.0, kwargs...)
