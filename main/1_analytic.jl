@@ -49,12 +49,7 @@ for i in 1:length(datas)
     end
 
     # This is the main call that calculates everything
-    output, s = produce_or_load(
-        datadir("main"), params, make_C_H;
-        filename = params -> savename(params; ignores = ["data"]),
-        prefix = string(data), suffix = "jld2", force = false,
-        storepatch = false,
-    )
+    output = produce_or_load_C_H(params, data; force = true)
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end

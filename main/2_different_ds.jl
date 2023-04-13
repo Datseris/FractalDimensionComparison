@@ -1,7 +1,6 @@
 # %% Comparison with analytically resolved models
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-include(srcdir("style.jl"))
 
 datasets = Vector(undef, 6)
 labels = Vector{String}(undef, 6)

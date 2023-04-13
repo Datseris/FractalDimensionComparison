@@ -12,16 +12,34 @@ COLORSCHEMES = Dict(
         "#191E44",
         "#0A9A84",
         "#AF9327",
-        "#5F166D",
+        "#791457",
         "#6C768C",
     ],
     "Petrol" => [
-        "#00A9B5",
-        "#20254A",
-        "#86612A",
+        "#006269",
         "#BD5DAA",
+        "#171B37",
+        "#86612A",
         "#691105",
+        "#00A9B5",
     ],
+    "Flames" => [
+        "#84150F",
+        "#D65A35",
+        "#E2B830",
+        "#36454F",
+        "#B2BEB5",
+        "#9C278C",
+    ],
+    "GreenMetal" => [
+        "#478C5C",
+        "#184B29",
+        "#2B1E1E", # darkest
+        "#8A9EA0",
+        "#224269",
+        "#A2CD88", # lightest
+    ],
+
 )
 
 COLORSCHEME = COLORSCHEMES[get(ENV, "COLORSCHEME", "JuliaDynamics")]
@@ -75,7 +93,7 @@ default_theme = Makie.Theme(
     Axis = (
         xlabelsize = _LABELSIZE,
         ylabelsize = _LABELSIZE,
-
+        titlesize = _LABELSIZE,
     ),
     Legend = (
         patchsize = (40f0, 20),
@@ -85,7 +103,7 @@ default_theme = Makie.Theme(
     ScatterLines = (cycle = cycle, markersize = 5),
     Scatter = (cycle = cycle, markersize = 15),
     Band = (cycle = :color,),
-    Label = (textsize = _FONTSIZE + 4,)
+    Label = (textsize = _LABELSIZE,)
 )
 
 set_theme!(default_theme)
@@ -104,13 +122,8 @@ if TEST_NEW_THEME
     linewidth = 60
     L = length(COLORSCHEME)
     function graycolor(s)
-        x = string(s)
-        if length(x) == 3
-            num = x[3]
-        else
-            num = x[3:4]
-        end
-        return "gray"*num
+        x = round(Int, 100s)
+        return "gray"*string(x)
     end
     barpos = Random.shuffle(1:4L)
     for (i, c) in enumerate(COLORS)

@@ -117,7 +117,7 @@ function roessler_lorenz(; N = default_N, kwargs...)
     append!(standardize(tr1), standardize(tr2))
 end
 function roessler_sphere(; N = default_N, Δt = 0.5, kwargs...)
-    ds = Systems.roessler([0.1, -0.2, 0.1]; c = 3.0, a = 0.2, b = 0.2; diffeq)
+    ds = Systems.roessler([0.1, -0.2, 0.1]; c = 3.0, a = 0.2, b = 0.2, diffeq)
     tr1 = standardize(trajectory(ds, (N/2)*Δt; Δt, Ttr = 1000)[1])
     tr2 = standardize(uniform_sphere(; N = N÷2))
     return append!(tr1, tr2)
@@ -156,7 +156,7 @@ end
 function koch(; maxk = 7, kwargs...)
     flakepoints = SVector{2}.([[0.0; 0.0], [0.5; sqrt(3)/2], [1; 0.0], [0.0; 0.0]])
     function innerkoch(points, maxk, α = sqrt(3)/2)
-        Q = SMatrix(0, 1, -1, 0)
+        Q = SMatrix{2,2}(0, 1, -1, 0)
         for k = 1:maxk
             n = length(points)
             new_points = eltype(points)[]

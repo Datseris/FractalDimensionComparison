@@ -65,11 +65,11 @@ function make_C_H(params)
 
     # before DynamicalSystems.jl v3.0 this was:
     # @time H = genentropy.(Ref(X), eH; q = qH)
-    @time H = entropy(Renyi(q, MathConstants.e), ValueHistogram(ε), x)
+    @time H = [entropy(Renyi(qH, MathConstants.e), ValueHistogram(ε), X) for ε in eH]
 
     # Theiler window
     if !haskey(params, "theiler") || isnothing(params["theiler"])
-        cols = columns(X)
+        cols = eachcol(X)
         theiler = maximum(estimate_delay(x, "mi_min") for x in cols)
         theiler = clamp(theiler, 0, 100) # safety
         @show theiler
