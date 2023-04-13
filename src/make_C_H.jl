@@ -1,8 +1,23 @@
-# TODO: Incorporate `produce_or_load` here, so that C is not recomputed if only
-# H changes, or vice versa
+export produce_or_load_C_H
+using DelayEmbeddings: estimate_delay
+
+function produce_or_load_C_H(params, data; kwargs...)
+    # Note: we could make it so there are two different calls to `produce_or_load`
+    # so that if H or C change, only that is recomputed. But computing H is so fast,
+    # we don't care about that for now...
+    output, s = produce_or_load(
+        datadir("main"), params, make_C_H;
+        filename = params -> savename(params; ignores = ["data"]),
+        prefix = string(data), suffix = "jld2", storepatch = false,
+        kwargs... # Kwargs are typically `force`
+    )
+    return output
+end
+
 
 """
     make_C_H(params)
+
 Generate the values of C (correlation sum) and H (generalized entropy) for the given
 parameters. This inclues `qH, qC, N, D` as well as the system name to generate data
 from. Used in `produce_or_load` from `DrWatson` and utilizes the `Data` module created
@@ -46,7 +61,11 @@ function make_C_H(params)
             eC = eH
         end
     end
-    @time H = genentropy.(Ref(X), eH; q = qH)
+
+
+    # before DynamicalSystems.jl v3.0 this was:
+    # @time H = genentropy.(Ref(X), eH; q = qH)
+    @time H = entropy(Renyi(q, MathConstants.e), ValueHistogram(ε), x)
 
     # Theiler window
     if !haskey(params, "theiler") || isnothing(params["theiler"])
