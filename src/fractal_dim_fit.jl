@@ -67,6 +67,8 @@ end
 #########################################################################################
 # Logarithmically corrected fit with LsqFit (Sprott & Rownalds correction)
 #########################################################################################
+import LsqFit
+
 function logarithmic_corrected_fit_lsqfit(x, y, p0 = [0.0, 0.0, 0.0])
     corrected_fit(x, p) = @. p[1] + p[2]*x + p[3]*log(-x)
     # TODO: Simply reduce ε to start at 0...

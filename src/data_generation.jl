@@ -188,6 +188,10 @@ function uniform_sphere(; N = default_N, kwargs...)
     end
     return StateSpaceSet(A)
 end
+function brownian_motion(; N = default_N, D = 3, seed = 4532, kwargs...)
+    rng = Random.MersenneTwister(seed)
+    return standardize(StateSpaceSet(cumsum(randn(rng, N, D); dims = 1)))
+end
 
 # Henon-Heiles
 @inbounds function henonheiles_rule(u, p, t)

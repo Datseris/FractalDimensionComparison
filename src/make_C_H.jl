@@ -46,7 +46,7 @@ function make_C_H(params)
     else
         # Entropy always gets max range
         eH = estimate_boxsizes(X;
-            w = get(params, "w", 1), z = get(params, "z", -2), k = 20,
+            w = get(params, "w", 0.5), z = get(params, "z", 0), k = 16,
             autoexpand,
         )
         if method == "bueno"

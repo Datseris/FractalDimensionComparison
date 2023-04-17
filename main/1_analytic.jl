@@ -5,7 +5,7 @@ using DrWatson
 datas = Vector(undef, 6)
 labels = Vector{String}(undef, 6)
 
-N = Int(1e5)
+N = Int(5e5)
 
 datas[1] = :roessler_periodic
 labels[1] = "periodic"
@@ -18,8 +18,10 @@ labels[2] = "quasiperiodic"
 datas[3] = :koch
 labels[3] = "Koch snowflake"
 
-datas[4] = :kaplanyorke_map
-labels[4] = "Kaplan-Yorke map"
+# datas[4] = :kaplanyorke_map
+# labels[4] = "Kaplan-Yorke map"
+datas[4] = :brownian_motion
+labels[4] = "3D Brownian motion"
 
 datas[5] = :uniform_sphere
 labels[5] = "sphere"
@@ -47,9 +49,12 @@ for i in 1:length(datas)
         params["maxk"] = 7
         delete!(params, "N")
     end
+    if data == :brownian_motion
+        params["theiler"] = 0
+    end
 
     # This is the main call that calculates everything
-    output = produce_or_load_C_H(params, data; force = true)
+    output = produce_or_load_C_H(params, data; force = false)
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end
@@ -69,4 +74,4 @@ fig = mainplot(
     dimension_fit_C = linear_regression_fit_linalg,
 )
 
-# wsave(plotsdir("paper", "analytic"), fig)
+wsave(plotsdir("paper", "analytic"), fig)

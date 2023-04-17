@@ -31,3 +31,6 @@ function __init__()
         Scatter = (cycle = Cycle([:color, :marker], covary = true), markersize = 20),
     )
 end
+
+# Extend DrWatson's `wsave`
+DrWatson._wsave(s, fig::Makie.Figure) = Makie.save(s*".png", fig; px_per_unit = 2)

@@ -36,6 +36,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         scatter!(axs[1], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
             label = Hlabel, alpha = 0.75
         )
+        axs[2].xticks = WilkinsonTicks(8; k_min = 6)
 
         # Correlation sum
         C = Cs[j]
@@ -48,6 +49,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         scatter!(axs[2], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
             label = Clabel, alpha = 0.75
         )
+        axs[2].xticks = WilkinsonTicks(8; k_min = 6)
 
         yield()
     end
