@@ -16,17 +16,17 @@ Ds = 4:10
 Ns = 10.0 .^ (3.3333:0.3333:5.3333) .|> round .|> Int
 
 methods = [
-    "estimate r0",
+    "buenoorovio r0",
     "entropy",
     "boxed large ε",
     "boxed small ε",
     "boxed small ε + r0",
     "Takens best",
     "fixed mass",
-    "molteno"
+    "molteno",
 ]
 
-k = 20 # amount of values in ε range
+k = 16 # amount of values in ε range
 base = MathConstants.e
 N_index_for_D = 6
 D_index_for_N = 1

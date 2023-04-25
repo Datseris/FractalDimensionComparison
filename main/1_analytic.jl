@@ -5,7 +5,7 @@ using DrWatson
 datas = Vector(undef, 6)
 labels = Vector{String}(undef, 6)
 
-N = Int(5e5)
+N = Int(1e5)
 
 datas[1] = :roessler_periodic
 labels[1] = "periodic"
@@ -54,7 +54,7 @@ for i in 1:length(datas)
     end
 
     # This is the main call that calculates everything
-    output = produce_or_load_C_H(params, data; force = false)
+    output = produce_or_load_C_H(params, data; force = true)
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end
