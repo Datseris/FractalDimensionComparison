@@ -1,7 +1,6 @@
 # %% Comparison with analytically resolved models
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
-include(srcdir("style.jl"))
+@quickactivate :FractalDimensionComparison # re-exports stuff
 
 datas = Vector(undef, 6)
 labels = Vector{String}(undef, 6)
@@ -19,8 +18,10 @@ labels[2] = "quasiperiodic"
 datas[3] = :koch
 labels[3] = "Koch snowflake"
 
-datas[4] = :kaplanyorke_map
-labels[4] = "Kaplan-Yorke map"
+# datas[4] = :kaplanyorke_map
+# labels[4] = "Kaplan-Yorke map"
+datas[4] = :brownian_motion
+labels[4] = "3D Brownian motion"
 
 datas[5] = :uniform_sphere
 labels[5] = "sphere"
@@ -40,7 +41,7 @@ for i in 1:length(datas)
 
     # Here we simply pack all parameters into a dictionary
     # (other parameters are (probably) globals)
-    params = @strdict N qH qC data 
+    params = @strdict N qH qC data
     if Cmethod ≠ "standard"
         params["Cmethod"] = Cmethod
     end
@@ -48,30 +49,29 @@ for i in 1:length(datas)
         params["maxk"] = 7
         delete!(params, "N")
     end
+    if data == :brownian_motion
+        params["theiler"] = 0
+    end
 
     # This is the main call that calculates everything
-    output, s = produce_or_load(
-        datadir("main"), params, make_C_H;
-        prefix = string(data), suffix = "jld2", force = false,
-        ignores = ["data"], storepatch = false,
-    )
+    output = produce_or_load_C_H(params, data; force = true)
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end
 
 
 # Do the actual plot
-legendtitle = "analytically known \$\\Delta\$"
+legendtitle = "analytically known Δ"
 
-fig, axs = mainplot(
-    Hs, Cs, eHs, eCs, labels, legendtitle; 
-    qH, qC, tol = 0.25, 
+fig = mainplot(
+    Hs, Cs, eHs, eCs, labels, legendtitle;
+    qH, qC, tol = 0.25,
 
     # For this plot we use standard regression fit because
     # the estimate is already so accurate, we don't want to
-    # have the unecessary larger confidence intervals from the 
+    # have the unecessary larger confidence intervals from the
     # logarithmic correction
-    dimension_fit_C = FractalDimension.linear_regression_fit_glm, 
+    dimension_fit_C = linear_regression_fit_linalg,
 )
 
 wsave(plotsdir("paper", "analytic"), fig)

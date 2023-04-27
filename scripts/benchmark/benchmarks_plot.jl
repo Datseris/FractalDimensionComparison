@@ -25,3 +25,5 @@ axs[1].set_ylabel("\$\\log_{10}(t \\mathrm{[sec]})\$")
 axs[2].set_xlabel("\$D\$")
 axs[2].set_ylabel("\$\\log_{10}(t \\mathrm{[sec]})\$")
 fig.tight_layout(pad=0.3)
+
+wsave(plotsdir("benchmark.png"), fig)

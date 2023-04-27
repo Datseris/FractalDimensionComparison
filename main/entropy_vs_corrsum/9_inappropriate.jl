@@ -1,6 +1,6 @@
 # %% Demonstration of pitfalls/invalid sets
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 datas = Symbol[]
@@ -45,7 +45,7 @@ for i in 1:length(datas)
     if Cmethod ≠ "standard"
         params["Cmethod"] = Cmethod
     end
-    params["z"] = 1 
+    params["z"] = 1
 
     # This is the main call that calculates everything
     output, s = produce_or_load(

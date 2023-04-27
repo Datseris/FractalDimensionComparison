@@ -1,7 +1,7 @@
 # Compare the sizes of the estimated `r0` from the Bueno-Orovio or Theiler
 # or the standard one from ChaosTools.jl (attractor size)
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 datasets = Vector(undef, 6)

@@ -1,6 +1,6 @@
 # %% Sensititivy to trajectory length
 using DrWatson
-@quickactivate :FractalDimension # uses DynamicalSystems, PyPlot
+@quickactivate :FractalDimensionComparison # re-exports stuff
 include(srcdir("style.jl"))
 
 N = Int(1e5)

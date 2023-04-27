@@ -1,6 +1,7 @@
-# Produce benchmarks comparing all functions with each other
+# Produce benchmarks comparing all functions with each other.
+# Save output into a data file in data/benchmarks.jld2
 using DrWatson
-@quickactivate :FractalDimensionComparison # re-exports stuff
+@quickactivate :FractalDimensionComparison
 include(srcdir("style.jl"))
 using BenchmarkTools, Statistics
 
@@ -8,35 +9,32 @@ using BenchmarkTools, Statistics
 genentropyf(X, εs::AbstractVector) = genentropy.(Ref(X), εs)
 buenooroviof(X, εs) = estimate_r0_buenoorovio(X)
 takensf(X, εs) = takens_best_estimate(X, maximum(εs))
+fixedmassf(X, εs) = correlationsum_fixedmass(X, length(εs))
+moltenof(X, εs) = molteno_boxing(X)
 
-Ds = 4:10 #10 # Dimensions
+Ds = 4:10
 Ns = 10.0 .^ (3.3333:0.3333:5.3333) .|> round .|> Int
 
 methods = [
-    "estimate r0",
+    "buenoorovio r0",
     "entropy",
     "boxed large ε",
     "boxed small ε",
     "boxed small ε + r0",
     "Takens best",
+    "fixed mass",
+    "molteno",
 ]
 
-k = 20 # amount of values in ε range
+k = 16 # amount of values in ε range
 base = MathConstants.e
-Ni = 6
-Di = 1
+N_index_for_D = 6
+D_index_for_N = 1
 
-function get_times_b(f, X, εs)
-    bm = @benchmark f($X, $εs)
+function get_times(f, X, εs)
+    bm = @benchmark $f($X, $εs)
     return median(bm).time/1e9
 end
-
-function get_times_e(f, X, εs)
-    bm = @elapsed f(X, εs)
-    return bm
-end
-
-get_times = get_times_b
 
 function create_times(X)
     B = zeros(length(methods))
@@ -57,7 +55,7 @@ function create_times(X)
     end
     large_range = float(base) .^ range(lower+1, upper_large-2; length = k)
     if !issorted(large_range)
-        println("small range not sorted")
+        println("large range not sorted")
         large_range = float(base) .^ range(lower+1, upper_large+4; length = k)
     end
 
@@ -66,10 +64,13 @@ function create_times(X)
     B[4] = get_times(boxed_correlationsum, X, small_range)
     B[5] = B[4] + B[1]
     B[6] = get_times(takensf, X, large_range)
+    B[7] = get_times(fixedmassf, X, large_range)
+    B[8] = get_times(moltenof, X, large_range)
     return B
 end
 
-data = Data.lorenz96_chaotic(; D = Ds[Di], N = maximum(Ns))
+# benchmark computation versus increasing N
+data = Data.lorenz96_chaotic(; D = Ds[D_index_for_N], N = maximum(Ns))
 BN = zeros(length(Ns), length(methods))
 for (i, N) in enumerate(Ns)
     @show i, N
@@ -77,13 +78,14 @@ for (i, N) in enumerate(Ns)
     BN[i, :] = create_times(X)
 end
 
+# benchmark computation versus increasing D
 BD = zeros(length(Ds), length(methods))
 for (i, D) in enumerate(Ds)
     @show i, D
-    X = Data.lorenz96_chaotic(; D, N = Ns[Ni])
+ X = Data.lorenz96_chaotic(; D, N = Ns[N_index_for_D])
     BD[i, :] = create_times(X)
 end
 
 # sname = savename("benchmarks", @dict(M, S, T, k), "jld2")
 
-wsave(datadir("benchmarks", "benchmarks.jld2"), (@strdict Ds Ns methods BN BD Di Ni k base))
+wsave(datadir("benchmarks", "benchmarks.jld2"), (@strdict Ds Ns methods BN BD D_index_for_N N_index_for_D k base))
