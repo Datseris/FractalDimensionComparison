@@ -2,7 +2,7 @@
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "bca32eb0714a2f2fa6f0f4263474f0fd1b4d8a40"
+project_hash = "4a62343f2044783a4910f5d241316510c894aa64"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -499,10 +499,10 @@ uuid = "f6369f11-7733-5829-9624-2563aa707210"
 version = "0.10.35"
 
 [[deps.FractalDimensions]]
-deps = ["ComplexityMeasures", "Distances", "Neighborhood", "ProgressMeter", "Random", "Reexport", "Roots", "Scratch", "SpecialFunctions", "StateSpaceSets", "Statistics"]
-path = "C:\\Users\\datse\\.julia\\dev\\FractalDimensions"
+deps = ["ComplexityMeasures", "Distances", "Neighborhood", "Polyester", "ProgressMeter", "Random", "Reexport", "Roots", "Scratch", "SpecialFunctions", "StateSpaceSets", "Statistics"]
+git-tree-sha1 = "a3ed0e5527e41f5bb1cd41179794f48e3c193f9b"
 uuid = "4665ce21-e117-4649-aed8-08bbe5ccbead"
-version = "1.0.4"
+version = "1.0.5"
 
 [[deps.FreeType]]
 deps = ["CEnum", "FreeType2_jll"]

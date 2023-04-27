@@ -29,5 +29,5 @@ StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 
 [compat]
 DrWatson = "2"
-FractalDimensions = "1.0.4"
+FractalDimensions = "1.0.5"
 julia = "1.7.0"
