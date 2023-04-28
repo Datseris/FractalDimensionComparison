@@ -18,10 +18,10 @@ labels[2] = "quasiperiodic"
 datas[3] = :koch
 labels[3] = "Koch snowflake"
 
-# datas[4] = :kaplanyorke_map
-# labels[4] = "Kaplan-Yorke map"
-datas[4] = :brownian_motion
-labels[4] = "3D Brownian motion"
+datas[4] = :kaplanyorke_map
+labels[4] = "Kaplan-Yorke map"
+# datas[4] = :brownian_motion
+# labels[4] = "3D Brownian motion"
 
 datas[5] = :uniform_sphere
 labels[5] = "sphere"

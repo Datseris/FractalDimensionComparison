@@ -29,6 +29,13 @@ function __init__()
         resolution = (figwidth, figheight),
         Lines = (cycle = Cycle([:color, :linestyle], covary = true), ),
         Scatter = (cycle = Cycle([:color, :marker], covary = true), markersize = 20),
+        fontsize = 22,
+        Axis = (
+            xlabelsize = 28,
+            ylabelsize = 28,
+            titlesize = 28,
+        ),
+        Label = (textsize = 28,),
     )
 end
 

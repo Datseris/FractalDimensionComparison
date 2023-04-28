@@ -116,9 +116,8 @@ function roessler_lorenz(; N = default_N, kwargs...)
     tr2 = lorenz96_chaotic(; D = 4, N = N÷2)[:, 1:3]
     append!(standardize(tr1), standardize(tr2))
 end
-function roessler_sphere(; N = default_N, Δt = 0.5, kwargs...)
-    ds = Systems.roessler([0.1, -0.2, 0.1]; c = 3.0, a = 0.2, b = 0.2, diffeq)
-    tr1 = standardize(trajectory(ds, (N/2)*Δt; Δt, Ttr = 1000)[1])
+function roessler_sphere(; N = default_N, kwargs...)
+    tr1 = roessler_periodic(; N = N÷2)
     tr2 = standardize(uniform_sphere(; N = N÷2))
     return append!(tr1, tr2)
 end
@@ -359,7 +358,7 @@ function coupled_logistics(; N = default_N, D = 8, k = 0.1, r = 4.0, η = 0, kwa
 end
 
 # Experimental
-using DelimitedFiles
+using DelimitedFiles, DelayEmbeddings
 function experimental_data(; N = nothing, name, kwargs...)
     file = datadir("experimental", name*".txt")
     if name == "electrochemical1"

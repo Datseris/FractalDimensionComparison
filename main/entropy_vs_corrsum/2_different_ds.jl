@@ -39,6 +39,9 @@ for i in 1:length(datasets)
     if data == :lorenz96_chaotic
         params["D"] = 8
     end
+    if data == :lorenz96_chaotic || data == :coupled_logistics
+        params["z"] = 0
+    end
 
     if Cmethod ≠ "standard"
         params["Cmethod"] = Cmethod

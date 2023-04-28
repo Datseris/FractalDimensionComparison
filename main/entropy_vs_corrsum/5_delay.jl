@@ -1,7 +1,5 @@
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-include(srcdir("style.jl"))
-
 N = Int(1e5)
 
 qH = 1
@@ -26,22 +24,19 @@ for d in embedding_ds
     params["theiler"] = params["τ"] = theiler
 
     # This is the main call that calculates everything
-    output, s = produce_or_load(
-        datadir("main"), params, make_C_H;
-        prefix = string(data), suffix = "jld2",
-        ignores = ["data"], tag = false,
-        force = true,
-    )
+    output = produce_or_load_C_H(params, data; force = false)
+
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end
 
 # Do the actual plot
-labels = ["\$d=$(d)\$" for d in embedding_ds]
+labels = ["d=$(d)" for d in embedding_ds]
 
-fig, axs = mainplot(
+fig = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
     qH, qC, tol = 0.25,
+    offsets = reverse(range(0; length = 6, step = 1.5)),
 )
 
 wsave(plotsdir("paper", "embedding_$(system)"), fig)

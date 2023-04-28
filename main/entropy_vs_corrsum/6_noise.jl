@@ -1,8 +1,7 @@
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-include(srcdir("style.jl"))
 
-N = 1*10^5
+N = Int(10^5)
 
 ds = range(2; step = 1, length = 6)
 
@@ -21,7 +20,7 @@ Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
 # Calculate values for H, C
 eHs, eCs, Hs, Cs = [Vector{Float64}[] for i in 1:4]
-for i in 1:length(systems)
+for i in eachindex(systems)
     data = systems[i]
     params = @strdict N qH qC data
     if Cmethod ≠ "standard"
@@ -40,11 +39,8 @@ for i in 1:length(systems)
     # title(labels[i])
 
     # This is the main call that calculates everything
-    output, s = produce_or_load(
-        datadir("main"), params, make_C_H;
-        prefix = string(data), suffix = "jld2", force = false,
-        ignores = ["data"], storepatch = false,
-    )
+    output = produce_or_load_C_H(params, data; force = false)
+
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end
@@ -53,12 +49,12 @@ end
 labels = ["none", "5% additive", "10% additive", "5% dynamic", "10% dynamic", "rounding"]
 legendtitle = "noise"
 
-fig, axs = mainplot(
+fig = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
     qH, qC, tol = 0.25,
-    # offsets = range(0; length = 6, step = 2),
-    # dimension_fit_C = FractalDimension.logarithmic_corrected_fit_lsqfit,
-    dimension_fit_C = FractalDimension.linear_regression_fit_linalg,
+    offsets = reverse(range(0; length = 6, step = 2.0)),
+    # If using logarithmic fit here we have overestimation
+    dimension_fit_C = linear_regression_fit_linalg,
 )
 
 
@@ -68,13 +64,14 @@ fig, axs = mainplot(
 data = systems[5]
 data_producing_function = getfield(Data, data)
 X = data_producing_function(; N)
-P = autoprismdim(X)
-r0 = ChaosTools.estimate_r0_buenoorovio(X, P)[1]
+r0 = estimate_r0_buenoorovio(X, 2)[1]
 
-axs[2].axvline(log(r0); color = "C0", lw = 2, ls = ":")
+axc = content(fig[2,1])
+vlines!(axc, log(r0); color = "black", linestyle = :dot)
 
 if Cmethod == "standard"
-wsave(plotsdir("paper", "noise"), fig)
+    wsave(plotsdir("paper", "noise"), fig)
 else
-wsave(plotsdir("paper", "noise_$(Cmethod)"), fig)
+    wsave(plotsdir("paper", "noise_$(Cmethod)"), fig)
 end
+fig

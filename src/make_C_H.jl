@@ -46,13 +46,13 @@ function make_C_H(params)
     else
         # Entropy always gets max range
         eH = estimate_boxsizes(X;
-            w = get(params, "w", 0.5), z = get(params, "z", 0), k = 16,
-            autoexpand,
+            w = get(params, "w", 1), z = get(params, "z", -2), k = 16,
+            autoexpand, base = MathConstants.e,
         )
         if method == "bueno"
-            P = autoprismdim(X)
-            r0 = ChaosTools.estimate_r0_buenoorovio(X, P)
-            ε0 = ChaosTools.minimum_pairwise_distance(X)[1]
+            P = 2
+            r0 = estimate_r0_buenoorovio(X, P)
+            ε0 = minimum_pairwise_distance(X)[1]
             if ε0 == 0
                 ε0 = r0/(MathConstants.e^3)
             end

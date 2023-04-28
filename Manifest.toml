@@ -500,9 +500,9 @@ version = "0.10.35"
 
 [[deps.FractalDimensions]]
 deps = ["ComplexityMeasures", "Distances", "Neighborhood", "Polyester", "ProgressMeter", "Random", "Reexport", "Roots", "Scratch", "SpecialFunctions", "StateSpaceSets", "Statistics"]
-git-tree-sha1 = "a3ed0e5527e41f5bb1cd41179794f48e3c193f9b"
+path = "C:\\Users\\gd419\\.julia\\dev\\FractalDimensions"
 uuid = "4665ce21-e117-4649-aed8-08bbe5ccbead"
-version = "1.0.5"
+version = "1.1.0"
 
 [[deps.FreeType]]
 deps = ["CEnum", "FreeType2_jll"]

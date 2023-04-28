@@ -1,7 +1,6 @@
 # %% Demonstration of pitfalls/invalid sets
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-include(srcdir("style.jl"))
 
 datas = Symbol[]
 labels = String[]
@@ -30,7 +29,7 @@ Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
 # Calculate values for H, C
 eHs, eCs, Hs, Cs = [Vector{Float64}[] for i in 1:4]
-for i in 1:length(datas)
+for i in eachindex(datas)
     # These are the parameters that change between the different elements of the plot
     data = datas[i]
 
@@ -48,11 +47,8 @@ for i in 1:length(datas)
     params["z"] = 1
 
     # This is the main call that calculates everything
-    output, s = produce_or_load(
-        datadir("main"), params, make_C_H;
-        prefix = string(data), suffix = "jld2", force = i == 3,
-        ignores = ["data"], storepatch = false,
-    )
+    output = produce_or_load_C_H(params, data; force = false)
+
     @unpack eH, eC, H, C = output
     push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
 end
@@ -61,5 +57,5 @@ end
 # Do the actual plot
 legendtitle = "inappropriate data"
 
-fig, axs = mainplot(Hs, Cs, eHs, eCs, labels, legendtitle; qH, qC, tol = 0.25)
+fig = mainplot(Hs, Cs, eHs, eCs, labels, legendtitle; qH, qC, tol = 0.25)
 wsave(plotsdir("paper", "inappropriate"), fig)

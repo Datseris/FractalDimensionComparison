@@ -1,10 +1,8 @@
 # %% Sensititivy to trajectory length
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-include(srcdir("style.jl"))
 
-# %%
-N = 1*10^5
+N = Int(10^5)
 systems = [:koch, :henon_chaotic]
 slabels = ["Koch", "Hénon"]
 qs = 2:4
@@ -29,25 +27,21 @@ for data in systems
         end
 
         # This is the main call that calculates everything
-        output, s = produce_or_load(
-            datadir("main"), params, make_C_H;
-            prefix = string(data), suffix = "jld2", force = false,
-            ignores = ["data"], storepatch = false
-        )
+        output = produce_or_load_C_H(params, data; force = false)
 
         @unpack eH, eC, H, C = output
         push!(eHs, eH); push!(Hs, H); push!(eCs, eC); push!(Cs, C)
     end
 end
 
-legendtitle = "impact of order \$q\$"
-labels = [s*" \$q=$(q)\$" for s in slabels for q in qs]
+legendtitle = "impact of order q"
+labels = [s*" q=$(q)" for s in slabels for q in qs]
 
-fig, axs = mainplot(
+fig = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
     qH = "q", qC = "q", tol = 0.25,
     offsets = range(0; length = 6, step = 1.5),
-    dimension_fit_C = FractalDimension.linear_regression_fit_linalg,
+    dimension_fit_C = linear_regression_fit_linalg,
 )
 
 wsave(plotsdir("paper", "orderq"), fig)
