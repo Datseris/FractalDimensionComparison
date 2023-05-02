@@ -5,7 +5,7 @@ N = Int(10^5)
 
 ds = range(2; step = 1, length = 6)
 
-qH = 1
+qH = 2
 qC = 2
 
 Cmethod = "standard" # bueno or standard. Decides the ε range.

@@ -23,7 +23,7 @@ push!(labels, "vostok")
 push!(datas, :experimental_data)
 push!(labels, "nifty50")
 
-qH = 1
+qH = 2
 qC = 2
 Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 

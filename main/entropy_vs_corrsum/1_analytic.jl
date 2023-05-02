@@ -29,7 +29,7 @@ labels[5] = "sphere"
 datas[6] = :standardmap_chaotic
 labels[6] = "SM (uniform)"
 
-qH = 0
+qH = 2
 qC = 2
 Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
