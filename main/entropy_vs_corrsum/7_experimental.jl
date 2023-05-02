@@ -14,7 +14,7 @@ labels = String[
 all_ros_range = MathConstants.e .^ (-4:0.25:1)
 Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
-qH = 1
+qH = 2
 qC = 2
 # Calculate values for H, C
 eHs, eCs, Hs, Cs = [Vector{Float64}[] for i in 1:4]

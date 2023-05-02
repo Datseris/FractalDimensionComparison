@@ -5,7 +5,6 @@ extract the "fractal dimension", the slope of some quantity vs ε
 
 using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
-using PredefinedDynamicalSystems
 N = 20_000
 D = 5
 
@@ -27,7 +26,7 @@ C = boxed_correlationsum(X, εs; w = 10, q)
 
 # i = findfirst(z -> z > 0, C)
 # Y = log.(C)
-# %%
+
 fig, axs = axesgrid(3, 2; sharex = true)
 
 for (k, Y) in enumerate((-H, log.(C)))

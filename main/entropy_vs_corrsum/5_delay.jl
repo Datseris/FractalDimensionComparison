@@ -2,7 +2,7 @@ using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
 N = Int(1e5)
 
-qH = 1
+qH = 2
 qC = 2
 
 system = :towel_chaotic

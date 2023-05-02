@@ -23,7 +23,7 @@ labels[5] = "Towel map"
 datasets[6] = :coupled_logistics
 labels[6] = "Coupled logistic (D=8)"
 
-qH = 1
+qH = 2
 qC = 2
 Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
@@ -40,7 +40,7 @@ for i in 1:length(datasets)
         params["D"] = 8
     end
     if data == :lorenz96_chaotic || data == :coupled_logistics
-        params["z"] = 0
+        params["z"] = -1
     end
 
     if Cmethod ≠ "standard"

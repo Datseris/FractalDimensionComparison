@@ -6,7 +6,7 @@ D = 8
 Ns = reverse([500, 1000, 5000, 10000, 50000, 100_000])
 labels = ["N=$(N)" for N in Ns]
 
-qH = 1
+qH = 2
 qC = 2
 Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
