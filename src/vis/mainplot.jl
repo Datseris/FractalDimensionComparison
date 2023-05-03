@@ -59,7 +59,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
     axs[2].xlabel = L"\log(\varepsilon)"
 
     for ax in axs
-        axislegend(ax;  labelsize = 20, nbanks = 3, patchsize=(10f0,20), position = :lt, groupgap = 8)
+        axislegend(ax; labelsize = 20, nbanks = 3, patchsize=(10f0,20), position = :lt, groupgap = 8)
     end
 
     # Make the informative legend

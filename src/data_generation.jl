@@ -337,6 +337,18 @@ function lorenz96_nonstationary_2(; N = default_N, Δt = 0.2, D = 6, F2=40.0, F1
     return standardize(append!(tr1, tr2))
 end
 
+function lorenz63_chaotic(; N = default_N, Δt = 0.1, σ = 10.0, ρ = 28.0, β = 8/3, kwargs...)
+    ds = CoupledODEs(lorenz_rule, [0, 10, 0.0], [σ, ρ, β])
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 100)
+    return standardize(tr)
+end
+@inbounds function lorenz_rule(u, p, t)
+    du1 = p[1]*(u[2]-u[1])
+    du2 = u[1]*(p[2]-u[3]) - u[2]
+    du3 = u[1]*u[2] - p[3]*u[3]
+    return SVector{3}(du1, du2, du3)
+end
+
 # Logistic maps
 logistic(u, r) = r*u*(1-u)
 function logistics!(un, u, p, t)

@@ -16,6 +16,7 @@ end
 
 # Specific to this paper:
 include("mainplot.jl")
+include("evtplot.jl")
 
 # Figure sizes corresponding to default (1 column) figures
 # with three rows (one is legend)
