@@ -58,4 +58,6 @@ fig = evtplot(Dlocs, labels, "exemplary sets";
     expected = [1, 2, 6.91/4, 1.26, 2.24, 8/4]
 )
 
+display(fig)
+
 wsave(plotsdir("paper", "evt_analytic"), fig)

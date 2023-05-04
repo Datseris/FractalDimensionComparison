@@ -3,15 +3,20 @@ using Statistics
 
 sigr(r, d::Int = 2) = round(r; digits = d)
 
-function evtplot(Ds, labels, legendtitle = "";
+function evtplot(args...; kw...)
+    fig, axs = axesgrid(1, 1)
+    evtplot!(axs[1], args...; kw...)
+    return fig
+end
+
+function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = nothing;
         cutoffs = fill(Inf, length(Ds)),
         upperlim = nothing, lowerlim = 0,
         expected = nothing, gap = 0.2, side = :both,
         inner_legend = true,
     )
 
-    fig, axs = axesgrid(1, 1)
-    ax = axs[1]
+    fig = parent(ax)
     ax.ylabel = L"\Delta^{(E)}"
     ax.xlabel = "dataset"
     ax.xticks = WilkinsonTicks(length(Ds); k_min = length(Ds))
@@ -37,10 +42,10 @@ function evtplot(Ds, labels, legendtitle = "";
         end
 
         # add mean and expected if there is one
-        lines!(ax, horizontal, [m, m]; color = :white, linestyle = :dash)
+        lines!(ax, horizontal, [m, m]; color = (:white, 0.75), linestyle = LINESTYLES[5])
         if !isnothing(expected)
             e = expected[i]
-            lines!(ax, horizontal, [e, e]; color = :white, linestyle = :dot)
+            lines!(ax, horizontal, [e, e]; color = (:white, 0.75), linestyle = :dot)
         end
     end
 
@@ -50,12 +55,13 @@ function evtplot(Ds, labels, legendtitle = "";
     end
 
     # Make the informative legend
-    leg = Legend(fig[0, :], violins, labels, legendtitle;
-        nbanks=3, patchsize=(40f0, 20),
-    )
-    space_out_legend!(leg)
-    space_out_legend!(leg) # not sure why I have to trigger this twice...
-    rowgap!(fig.layout, 10)
-    display(fig)
-    return fig
+    if !isnothing(legendtitle)
+        leg = Legend(fig[0, :], violins, labels, legendtitle;
+            nbanks=3, patchsize=(40f0, 20),
+        )
+        space_out_legend!(leg)
+        space_out_legend!(leg) # not sure why I have to trigger this twice...
+        rowgap!(fig.layout, 10)
+    end
+
 end

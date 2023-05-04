@@ -88,6 +88,6 @@ for (i, Dloc) in enumerate(Clocs)
     lines!(ax, horizontal, [m, m]; color = COLORS[i], linestyle = :dot)
 end
 
-fig
+display(fig)
 
 wsave(plotsdir("paper", "evt_pointwise"), fig)
