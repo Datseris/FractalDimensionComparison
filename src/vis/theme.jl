@@ -22,6 +22,7 @@ include("evtplot.jl")
 # with three rows (one is legend)
 figwidth = 800
 figheight = 600
+export figwidth, figheight
 
 # Because we use DrWatson's `@quickactivate :MyProjectName`
 function __init__()

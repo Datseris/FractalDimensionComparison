@@ -1,4 +1,4 @@
-export evtplot
+export evtplot, evtplot!
 using Statistics
 
 sigr(r, d::Int = 2) = round(r; digits = d)
@@ -9,27 +9,44 @@ function evtplot(args...; kw...)
     return fig
 end
 
-function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = nothing;
+function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = "";
         cutoffs = fill(Inf, length(Ds)),
         upperlim = nothing, lowerlim = 0,
         expected = nothing, gap = 0.2, side = :both,
         inner_legend = true,
+        fig = ax.parent, legend_position = fig[0, :],
+        xpositions = 1:length(Ds),
+        ticknum = 6
     )
 
-    fig = parent(ax)
     ax.ylabel = L"\Delta^{(E)}"
     ax.xlabel = "dataset"
-    ax.xticks = WilkinsonTicks(length(Ds); k_min = length(Ds))
+    ax.xticks = 1:ticknum # WilkinsonTicks(6; k_min = length(Ds))
     violins = []
 
-    for (i, Dloc) in enumerate(Ds)
+    for (j, Dloc) in enumerate(Ds)
+        i = xpositions[j]
         # get some statistics
         m = mean(Dloc)
         σ = std(Dloc)
-        c = cutoffs[i]
+        # confidence interval for mean comes from
+        # https://www.statology.org/confidence-interval-mean/
+        # and same stuff can be found in
+        # https://stats.libretexts.org/Courses/Las_Positas_College/Math_40%3A_Statistics_and_Probability/07%3A_Confidence_Intervals_and_Sample_Size/7.02%3A_Confidence_Intervals_for_the_Mean_with_Known_Standard_Deviation\
+
+        # we use the 95% CI
+        ci = 1.96*σ/sqrt(length(Dloc))
+        left = m - ci
+        right = m + ci
+
+        c = cutoffs[j]
         p = 100count(>(c), Dloc)/length(Dloc)
 
-        lab = "$(sigr(m, 2)) ± $(sigr(σ)) ($(sigr(p, 1))%)"
+        # Various ways to print info about the distributions
+        lab = "$(rdspl(m, 2)) ± $(rdspl(σ)) ($(sigr(p, 1))%)"
+        lab = "($(rdspl(left, 2)), $(rdspl(right, 2))) [$(sigr(p, 1))%]"
+        lab = "$(rdspl(m, 2)) [$(round(Int, p))%]"
+
         horizontal = [i - 0.5 + gap/2, i + 0.5 - gap/2]
         horizontal_small = [i - 0.25 + gap/2, i + 0.25 - gap/2]
 
@@ -43,8 +60,9 @@ function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = nothing;
 
         # add mean and expected if there is one
         lines!(ax, horizontal, [m, m]; color = (:white, 0.75), linestyle = LINESTYLES[5])
+
         if !isnothing(expected)
-            e = expected[i]
+            e = expected[j]
             lines!(ax, horizontal, [e, e]; color = (:white, 0.75), linestyle = :dot)
         end
     end
@@ -55,8 +73,8 @@ function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = nothing;
     end
 
     # Make the informative legend
-    if !isnothing(legendtitle)
-        leg = Legend(fig[0, :], violins, labels, legendtitle;
+    if !isnothing(legend_position)
+        leg = Legend(legend_position, violins, labels, legendtitle;
             nbanks=3, patchsize=(40f0, 20),
         )
         space_out_legend!(leg)

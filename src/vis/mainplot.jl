@@ -4,7 +4,7 @@ export mainplot, estimate_embedding_plot
     rdspl(x, n = 2)
 Round `x` to `n` sigdigits for display purposes.
 """
-rdspl(x::Real, n = 2) = round(x, digits=n)
+rdspl(x::Real, n = 2) = round(x; digits=n)
 rdspl(x::AbstractVector, n = 2) = Tuple((round.(Float64.(x); sigdigits=n)))
 
 function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;

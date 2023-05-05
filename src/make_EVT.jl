@@ -4,7 +4,7 @@ function produce_or_load_EVT(params, data; kwargs...)
 
     output, s = produce_or_load(
         datadir("evt"), params, make_EVT;
-        filename = params -> savename(params; ignores = ["data"]),
+        filename = params -> savename(params; ignores = ["data"], val_to_string = string),
         prefix = "evt_"*string(data), suffix = "jld2", storepatch = false,
         kwargs... # Kwargs are typically `force`
     )
@@ -57,7 +57,7 @@ function produce_or_load_pointwise(params, data; kwargs...)
 
     output, s = produce_or_load(
         datadir("evt"), params, make_pairwise;
-        filename = params -> savename(params; ignores = ["data"]),
+        filename = params -> savename(params; ignores = ["data"], sigdigits = nothing),
         prefix = "pointwise_"*string(data), suffix = "jld2", storepatch = false,
         kwargs... # Kwargs are typically `force`
     )
