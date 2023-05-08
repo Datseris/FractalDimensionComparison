@@ -39,13 +39,18 @@ function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = "";
         left = m - ci
         right = m + ci
 
-        c = cutoffs[j]
-        p = 100count(>(c), Dloc)/length(Dloc)
 
         # Various ways to print info about the distributions
-        lab = "$(rdspl(m, 2)) ± $(rdspl(σ)) ($(sigr(p, 1))%)"
-        lab = "($(rdspl(left, 2)), $(rdspl(right, 2))) [$(sigr(p, 1))%]"
-        lab = "$(rdspl(m, 2)) [$(round(Int, p))%]"
+        # lab = "$(rdspl(m, 2)) ± $(rdspl(σ)) ($(sigr(p, 1))%)"
+        # lab = "($(rdspl(left, 2)), $(rdspl(right, 2))) [$(sigr(p, 1))%]"
+        c = cutoffs[j]
+
+        if c < Inf
+            p = 100count(>(c), Dloc)/length(Dloc)
+            lab = "$(rdspl(m, 2)) [$(round(Int, p))%]"
+        else
+            lab = "$(rdspl(m, 2))"
+        end
 
         horizontal = [i - 0.5 + gap/2, i + 0.5 - gap/2]
         horizontal_small = [i - 0.25 + gap/2, i + 0.25 - gap/2]
