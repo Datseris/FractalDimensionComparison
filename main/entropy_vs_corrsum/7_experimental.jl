@@ -4,11 +4,11 @@ using DrWatson
 
 names = String[
     "electrochemical1", "electrochemical2", "shinriki1",
-    "roessler_embed",  "doublependulum",
+    "roessler_embed",  "doublependulum", "ceps",
 ]
 labels = String[
     "electroch. 1", "electroch. 2", "Shinriki",
-    "Rössler Net",  "Double pend.",
+    "Rössler Net",  "Double pend.", "ECG IBI",
 ]
 
 all_ros_range = MathConstants.e .^ (-4:0.25:1)
@@ -45,7 +45,8 @@ legendtitle = "experimental data"
 fig = mainplot(
     Hs, Cs, eHs, eCs, labels, legendtitle;
     qH, qC, tol = 0.25,
-    offsets = range(0; length = 6, step = 2),
+    offsets = [2, 0, -1, 0, 0, -3],
+    # offsets = reverse(range(0; length = 6, step = 1.5)),
     # Why not use logarithmic here?
     dimension_fit_C = logarithmic_corrected_fit_lsqfit,
     # dimension_fit_C = linear_regression_fit_linalg,

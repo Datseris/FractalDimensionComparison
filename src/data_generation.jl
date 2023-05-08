@@ -417,6 +417,16 @@ function experimental_data(; N = nothing, name, kwargs...)
         jd = [2, 2, 2, 2, 1, 1]
         A = StateSpaceSet(M)
         genembed(A, τx, jx)
+    elseif name == "ceps"
+        x = vec(readdlm(file))
+        # Using Cao's method:
+        τ = (0, 13, 26, 39, 7)
+        A = genembed(x, τ)
+    elseif name == "ceps2"
+        x = vec(readdlm(file))
+        x = x[1:5:end]
+        τ = (0, 17, 34, 51, 68, 8)
+        A = genembed(x, τ)
     else
         error("Experimental dataset $(name) is uknown")
     end
