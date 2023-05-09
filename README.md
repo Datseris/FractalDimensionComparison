@@ -1,6 +1,6 @@
 # Estimating the fractal dimension: a comparative review and open source implementations
 
-This code base is accompanying our paper with title as see above. It is available on arXiv: https://arxiv.org/abs/2109.05937
+This code base is accompanying our paper with title as above. It is available on arXiv: https://arxiv.org/abs/2109.05937
 
 This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/) to make a reproducible scientific project.
 It is created by George Datseris.
