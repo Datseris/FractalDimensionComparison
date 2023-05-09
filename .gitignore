@@ -7,12 +7,13 @@ videos
 plots
 notebooks
 _research
-data
 *.pptx
 paper/feedback
 *.docx
 documents
-!data/experimental/*
+# Ignore data, but allow experimental
+data/*
+!data/experimental/
 
 ################################################################################
 #                                    Julia                                     #
