@@ -11,6 +11,8 @@ data
 *.pptx
 paper/feedback
 *.docx
+documents
+!data/experimental/*
 
 ################################################################################
 #                                    Julia                                     #
