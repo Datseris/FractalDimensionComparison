@@ -35,17 +35,17 @@ function make_C_H(params)
     # and propagates all keywords of `params` into it (if any can be used, e.g. `D` or `dt`)
     @info "Producing data..."
     data_producing_function = getfield(Data, data)
-    X = data_producing_function(; dict2ntuple(params)...)
+    @time X = data_producing_function(; dict2ntuple(params)...)
 
     method = get(params, "Cmethod", "standard")
     autoexpand = get(params, "autoexpand", false)
-    @info "Calculating εs and H..."
     # boxsizes for entropy and corrsum versions
     if haskey(params, "e")
         eH = eC = params["e"]
     else
+        @info "Calculating boxsizes..."
         # Entropy always gets max range
-        eH = estimate_boxsizes(X;
+        @time eH = estimate_boxsizes(X;
             w = get(params, "w", 1), z = get(params, "z", -2), k = 16,
             autoexpand, base = MathConstants.e,
         )
@@ -62,11 +62,17 @@ function make_C_H(params)
         end
     end
 
-
-    # before DynamicalSystems.jl v3.0 this was:
-    # @time H = genentropy.(Ref(X), eH; q = qH)
-    @time H = [entropy(Renyi(qH, MathConstants.e), ValueHistogram(ε), X) for ε in eH]
-
+    if get(params, "compute_H", true)
+        @info "Calculating entropies..."
+        # before DynamicalSystems.jl v3.0 this was:
+        # @time H = genentropy.(Ref(X), eH; q = qH)
+        # now it would be:
+        # @time H = [entropy(Renyi(qH, MathConstants.e), ValueHistogram(ε), X) for ε in eH]
+        # but we utilize the internal code from FractalDimensions.jl (it's threaded)
+        @time H = FractalDimensions._threaded_entropies(X, eH, qH, MathConstants.e, true)
+    else
+        H = zeros(length(eH))
+    end
     # Theiler window
     if !haskey(params, "theiler") || isnothing(params["theiler"])
         cols = eachcol(X)
@@ -78,7 +84,14 @@ function make_C_H(params)
     end
 
     @info "Calculating correlation sum..."
-    @time C = boxed_correlationsum(X, eC; q = qC, w = theiler, show_progress=true)
+    use_boxed = get(params, "use_boxed", true)
+    P = get(params, "prism", 2)
+
+    if use_boxed
+        @time C = boxed_correlationsum(X, eC; P, q = qC, w = theiler, show_progress=true)
+    else
+        @time C = correlationsum(X, eC; q = qC, w = theiler, show_progress=true)
+    end
     @pack! params = eH, eC, H, C, theiler
     @info "All done. `make_C_H` is returning now."
     return params

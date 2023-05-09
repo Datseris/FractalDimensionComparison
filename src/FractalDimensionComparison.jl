@@ -9,6 +9,7 @@ include("fractal_dim_fit.jl")
 include("data_generation.jl")
 export Data
 include("make_C_H.jl")
+include("make_EVT.jl")
 
 function mse(x, y)
     m = length(x)

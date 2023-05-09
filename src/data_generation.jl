@@ -337,6 +337,18 @@ function lorenz96_nonstationary_2(; N = default_N, Δt = 0.2, D = 6, F2=40.0, F1
     return standardize(append!(tr1, tr2))
 end
 
+function lorenz63_chaotic(; N = default_N, Δt = 0.1, σ = 10.0, ρ = 28.0, β = 8/3, kwargs...)
+    ds = CoupledODEs(lorenz_rule, [0, 10, 0.0], [σ, ρ, β])
+    tr, = trajectory(ds, N*Δt; Δt, Ttr = 100)
+    return standardize(tr)
+end
+@inbounds function lorenz_rule(u, p, t)
+    du1 = p[1]*(u[2]-u[1])
+    du2 = u[1]*(p[2]-u[3]) - u[2]
+    du3 = u[1]*u[2] - p[3]*u[3]
+    return SVector{3}(du1, du2, du3)
+end
+
 # Logistic maps
 logistic(u, r) = r*u*(1-u)
 function logistics!(un, u, p, t)
@@ -405,6 +417,16 @@ function experimental_data(; N = nothing, name, kwargs...)
         jd = [2, 2, 2, 2, 1, 1]
         A = StateSpaceSet(M)
         genembed(A, τx, jx)
+    elseif name == "ceps"
+        x = vec(readdlm(file))
+        # Using Cao's method:
+        τ = (0, 13, 26, 39, 7)
+        A = genembed(x, τ)
+    elseif name == "ceps2"
+        x = vec(readdlm(file))
+        x = x[1:5:end]
+        τ = (0, 17, 34, 51, 68, 8)
+        A = genembed(x, τ)
     else
         error("Experimental dataset $(name) is uknown")
     end
@@ -436,6 +458,51 @@ function embed_system(; system, d = 4, τ = nothing, kwargs...)
         τ = estimate_delay(x, "mi_min")
     end
     return embed(x, d, τ)
+end
+
+
+import FFTW
+# Kuramoto Shiva, from NLD book
+function ksiva(; Δt = 0.25, N = default_N,
+        b1 = 20, # total domain size
+        kwargs...
+    )
+    T = N*Δt
+    saveat = 0:Δt:T
+    dx = 0.2 # spatial discretization
+    xs = range(0, b1, step = dx) # space
+    u0 = @. cos(xs) + 0.1*sin(xs/8) + 0.01*cos((2π/b1)*xs)
+    ks = Vector(FFTW.rfftfreq(length(u0))/dx) # conjugate space (wavenumbers)
+    forward_plan = FFTW.plan_rfft(u0)
+    y0 = forward_plan * u0
+    inverse_plan = FFTW.plan_irfft(y0, length(u0))
+    ik2 = -im .* ks ./ 2
+    k²_k⁴ = @. ks^2 - ks^4
+
+    ydummy = copy(y0)
+    udummy = copy(u0)
+    ksparams = (forward_plan, inverse_plan, udummy, ydummy, k²_k⁴, ik2)
+
+    function kse_spectral!(dy, y, p, t)
+        forward_plan, inverse_plan, udummy, ydummy, k²_k⁴, ik2 = p
+        y² = begin # nonlinear term
+            mul!(udummy, inverse_plan, y) # create current u in x-space
+            udummy .*= udummy # square current u
+            mul!(ydummy, forward_plan, udummy) # transform to k-space
+        end
+        # KS equation in spectral space
+        @. dy = y²*ik2 + k²_k⁴*y
+        return nothing
+    end
+
+    prob = ODEProblem(kse_spectral!, y0, (0.0, T), ksparams)
+    @time sol = solve(prob, Tsit5(); saveat)
+    u = [inverse_plan*y/2 for y in sol.u]
+    # U = hcat(u...)
+    # U ./= 2 # standardize
+    X = StateSpaceSet(u)
+    return X
+    # return standardize(X)
 end
 
 end
