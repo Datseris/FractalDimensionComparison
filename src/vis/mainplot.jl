@@ -30,7 +30,7 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         x, y = log.(eH), -H
         line = lines!(axs[1], x, y .+ z; alpha = 0.9)
         push!(llines, line)
-        region, d = linear_region(x, y; tol, warning = false)
+        region, d = linear_region(x, y; tol, warning = false, sat = 0.1)
         Δ, Δ05, Δ95 = dimension_fit_H(x[region], y[region])
         Hlabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
         scatter!(axs[1], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
@@ -41,14 +41,17 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         # Correlation sum
         C = Cs[j]
         i = findfirst(c -> c > 0, C)
-        x, y = log.(eC)[i:end], log.(C)[i:end]
-        region, d = linear_region(x, y; tol, warning = false)
-        Δ, Δ05, Δ95 = dimension_fit_C(x[region], y[region])
-        Clabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
-        lines!(axs[2], x, y .+ z; alpha = 0.9)
-        scatter!(axs[2], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
-            label = Clabel, alpha = 0.75
-        )
+        if !isnothing(i)
+            x, y = log.(eC)[i:end], log.(C)[i:end]
+            region, d = linear_region(x, y; tol, warning = false)
+            Δ, Δ05, Δ95 = dimension_fit_C(x[region], y[region])
+            Clabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
+            lines!(axs[2], x, y .+ z; alpha = 0.9)
+            scatter!(axs[2], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
+                label = Clabel, alpha = 0.75
+            )
+        end
+
         axs[2].xticks = WilkinsonTicks(8; k_min = 6)
 
         yield()

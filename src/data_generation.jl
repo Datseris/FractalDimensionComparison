@@ -460,4 +460,49 @@ function embed_system(; system, d = 4, τ = nothing, kwargs...)
     return embed(x, d, τ)
 end
 
+
+import FFTW
+# Kuramoto Shiva, from NLD book
+function ksiva(; Δt = 0.25, N = default_N,
+        b1 = 20, # total domain size
+        kwargs...
+    )
+    T = N*Δt
+    saveat = 0:Δt:T
+    dx = 0.2 # spatial discretization
+    xs = range(0, b1, step = dx) # space
+    u0 = @. cos(xs) + 0.1*sin(xs/8) + 0.01*cos((2π/b1)*xs)
+    ks = Vector(FFTW.rfftfreq(length(u0))/dx) # conjugate space (wavenumbers)
+    forward_plan = FFTW.plan_rfft(u0)
+    y0 = forward_plan * u0
+    inverse_plan = FFTW.plan_irfft(y0, length(u0))
+    ik2 = -im .* ks ./ 2
+    k²_k⁴ = @. ks^2 - ks^4
+
+    ydummy = copy(y0)
+    udummy = copy(u0)
+    ksparams = (forward_plan, inverse_plan, udummy, ydummy, k²_k⁴, ik2)
+
+    function kse_spectral!(dy, y, p, t)
+        forward_plan, inverse_plan, udummy, ydummy, k²_k⁴, ik2 = p
+        y² = begin # nonlinear term
+            mul!(udummy, inverse_plan, y) # create current u in x-space
+            udummy .*= udummy # square current u
+            mul!(ydummy, forward_plan, udummy) # transform to k-space
+        end
+        # KS equation in spectral space
+        @. dy = y²*ik2 + k²_k⁴*y
+        return nothing
+    end
+
+    prob = ODEProblem(kse_spectral!, y0, (0.0, T), ksparams)
+    @time sol = solve(prob, Tsit5(); saveat)
+    u = [inverse_plan*y/2 for y in sol.u]
+    # U = hcat(u...)
+    # U ./= 2 # standardize
+    X = StateSpaceSet(u)
+    return X
+    # return standardize(X)
+end
+
 end
