@@ -7,6 +7,7 @@ data1_expected = 6.91/4
 data2_expected = 2.2
 data1_cutoff = 2
 data2_cutoff = 3
+estimator = :exp
 
 # 1st subplot: vary p
 N = Int(1e5)
@@ -17,7 +18,7 @@ Dlocs_ps = Vector{Float64}[]
 
 for data in (data1, data2)
     for p in ps
-        params = @strdict data p N
+        params = @strdict data p N estimator
         if data == :lorenz96_chaotic
             params["D"] = 8
         end
@@ -41,7 +42,7 @@ for data in (data1, data2)
     for p in ps
         N = round(Int, set/(1 - p))
         @show N
-        params = @strdict data p N
+        params = @strdict data p N estimator
         if data == :lorenz96_chaotic
             params["D"] = 8
         end
@@ -81,4 +82,4 @@ end
 
 display(fig)
 
-wsave(plotsdir("paper", "evt_quantile"), fig)
+wsave(plotsdir("paper", "evt_quantile_$(estimator)"), fig)

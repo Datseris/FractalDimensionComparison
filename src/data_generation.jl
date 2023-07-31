@@ -300,7 +300,7 @@ struct Lorenz96{N} end # Structure for size type
     end
     return nothing
 end
-function lorenz96_chaotic(; N = default_N, Δt = 0.2, D = 4, F = 24.0, kwargs...)
+function lorenz96_chaotic(; N = default_N, Δt = 0.2, D = 8, F = 24.0, kwargs...)
     ds = CoupledODEs(Lorenz96{D}(), range(0; length = D, step = 0.1), [F]; diffeq)
     tr, = trajectory(ds, N*Δt; Δt, Ttr = 1000.0)
     standardize(tr)
@@ -431,11 +431,11 @@ function experimental_data(; N = nothing, name, kwargs...)
         error("Experimental dataset $(name) is uknown")
     end
     A = standardize(A)
-    if isnothing(N)
-        return A
-    else
-        return StateSpaceSet(A[1:min(length(A), N)])
+    if !isnothing(N)
+        A = StateSpaceSet(A[1:min(length(A), N)])
     end
+    println("Experimental dataset $(name) has length $(length(A))")
+    return A
 end
 
 function electronic_roessler_mean_field(;R, Y = 1, d = 4, kwargs...)
@@ -450,12 +450,16 @@ function electronic_roessler(; R=1, Y = 1, dms = 1:28, kwargs...)
     standardize(StateSpaceSet(tr))
 end
 
-function embed_system(; system, d = 4, τ = nothing, kwargs...)
+# if η > 0, add white noise of strength η
+function embed_system(; system, d = 4, τ = nothing, η = 0, kwargs...)
     data_producing_function = getfield(Data, system)
     x = data_producing_function(; kwargs...)[:, 1]
     x = standardize(x)
     if isnothing(τ)
         τ = estimate_delay(x, "mi_min")
+    end
+    if η > 0
+        x .+= η .* randn(length(x))
     end
     return embed(x, d, τ)
 end

@@ -6,7 +6,10 @@ datas = Symbol[]
 labels = String[]
 
 N = Int(1e4)
-p = 0.98
+# The experimental data are significantly smaller so we should use different p
+plarge = 0.98
+psmall = 0.95
+estimator = :exp
 qH = 2
 qC = 2
 z = 1
@@ -38,9 +41,11 @@ for i in eachindex(datas)
     # (other parameters are (probably) globals)
     if string(data)[1:3] != "exp"
         params = @strdict N data
+        p = plarge
     else
         name = labels[i]
         params = @strdict data name
+        p = psmall
     end
     if data == :lorenz96_chaotic
         D = 32
@@ -52,13 +57,10 @@ for i in eachindex(datas)
         @pack! params = N
     end
 
-    params_evt = copy(params)
-    params_c = copy(params)
-    @pack! params_evt = p
-    @pack! params_c = qH, qC, z
+    @pack! params = p, estimator
 
     # This is the main call that calculates everything
-    output = produce_or_load_EVT(params_evt, data; force = false)
+    output = produce_or_load_EVT(params, data; force = false)
     @unpack Δloc = output
     if data == :lorenz96_chaotic || data == :ksiva
         Δloc ./= 4
@@ -68,11 +70,11 @@ for i in eachindex(datas)
 end
 
 # Do the actual plot
-legendtitle = "extreme cases, p = $(p)"
+legendtitle = "extreme cases"
 fig = evtplot(Dlocs, labels, legendtitle;
     cutoffs = [6, 3, Inf, Inf, Inf, Inf],
     upperlim = 8, lowerlim = 0.5,
 )
 
 display(fig)
-# wsave(plotsdir("paper", "evt_extreme"), fig)
+wsave(plotsdir("paper", "evt_extreme_$(estimator)"), fig)

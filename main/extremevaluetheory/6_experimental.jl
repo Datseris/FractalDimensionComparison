@@ -10,6 +10,7 @@ labels = String[
     "Rössler Net",  "Double pend.", "ECG IBI",
 ]
 
+estimator = :exp
 p = 0.98
 Dlocs = Vector{Float64}[]
 
@@ -17,7 +18,7 @@ for i in 1:length(labels)
     # These are the parameters that change between the different elements of the plot
     data = :experimental_data
     name = names[i]
-    params = @strdict p data name
+    params = @strdict p data name estimator
 
     output = produce_or_load_EVT(params, data; force = false)
     @unpack Δloc = output
@@ -30,4 +31,4 @@ fig = evtplot(Dlocs, labels, legendtitle;
 )
 
 display(fig)
-wsave(plotsdir("paper", "evt_experimental"), fig)
+wsave(plotsdir("paper", "evt_experimental_$(estimator)"), fig)

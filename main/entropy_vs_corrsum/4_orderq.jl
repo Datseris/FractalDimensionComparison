@@ -45,3 +45,33 @@ fig = mainplot(
 )
 
 wsave(plotsdir("paper", "orderq"), fig)
+
+# %% Analysis of where the correlation sum slopes change and how much are they
+
+fig = Figure()
+
+for j in (5, 6) # last two is the two slopes
+    C = Cs[j]
+    eC = eCs[j]
+    ax = Axis(fig[j-4, 1])
+
+    i = findfirst(c -> c > 0, C)
+    if !isnothing(i)
+        x, y = log.(eC)[i:end], log.(C)[i:end]
+    else
+        error()
+    end
+
+    lrs, tangents = linear_regions(x, y)
+
+    for r in lrs
+        scatterlines!(ax, x[r], y[r])
+    end
+
+    println("Data $j")
+    for k in eachindex(lrs)
+        @show (lrs[k], tangents[k])
+    end
+end
+
+fig

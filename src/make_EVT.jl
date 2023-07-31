@@ -19,6 +19,7 @@ function make_EVT(params)
     X = data_producing_function(; dict2ntuple(params)...)
     estimator = get(params, "estimator", :mm)
     allocate_matrix = length(X) ≤ 10_000
+    @show estimator
 
     @info "Calculating EVT local dims..."
     Δloc, = extremevaltheory_dims_persistences(X, p;
@@ -57,7 +58,7 @@ function produce_or_load_pointwise(params, data; kwargs...)
 
     output, s = produce_or_load(
         datadir("evt"), params, make_pairwise;
-        filename = params -> savename(params; ignores = ["data"], sigdigits = nothing),
+        filename = params -> savename(params; ignores = ["data"]),
         prefix = "pointwise_"*string(data), suffix = "jld2", storepatch = false,
         kwargs... # Kwargs are typically `force`
     )

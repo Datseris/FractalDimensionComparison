@@ -7,6 +7,7 @@ labels = Vector{String}(undef, 6)
 
 N = Int(1e5)
 p = 0.99
+estimator = :exp # any of :exp, :mm, :pwm
 
 datas[1] = :roessler_periodic
 labels[1] = "periodic"
@@ -34,7 +35,7 @@ for i in 1:length(datas)
 
     # Here we simply pack all parameters into a dictionary
     # (other parameters are (probably) globals)
-    params = @strdict data p N
+    params = @strdict data p N estimator
 
     if data == :koch
         params["maxk"] = 7
@@ -44,7 +45,7 @@ for i in 1:length(datas)
     end
 
     # This is the main call that calculates everything
-    output = produce_or_load_EVT(params, data; force = false)
+    output = produce_or_load_EVT(params, data)
     @unpack Δloc = output
     push!(Dlocs, Δloc)
 end
@@ -60,4 +61,4 @@ fig = evtplot(Dlocs, labels, "exemplary sets";
 
 display(fig)
 
-wsave(plotsdir("paper", "evt_analytic"), fig)
+wsave(plotsdir("paper", "evt_analytic_$(estimator)"), fig)

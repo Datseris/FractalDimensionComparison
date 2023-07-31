@@ -2,6 +2,7 @@ using DrWatson
 @quickactivate :FractalDimensionComparison # re-exports stuff
 
 p = 0.99
+estimator = :exp
 
 # 1st subplot: length
 Ns = reverse([500, 1000, 5000, 10000, 50000, 100_000])
@@ -10,7 +11,7 @@ data = :lorenz96_chaotic
 
 Dlocs_length = Vector{Float64}[]
 for N in Ns
-    params = @strdict data p N
+    params = @strdict data p N estimator
     if data == :lorenz96_chaotic
         params["D"] = 8
     end
@@ -27,7 +28,7 @@ embedding_ds = 3:8
 labels_embed = ["d=$(d)" for d in embedding_ds]
 Dlocs_embed = Vector{Float64}[]
 for d in embedding_ds
-    params = @strdict data p N d system
+    params = @strdict data p N d system estimator
     output = produce_or_load_EVT(params, data; force = false)
     @unpack Δloc = output
     push!(Dlocs_embed, Δloc)
@@ -41,7 +42,7 @@ N = Int(1e5)
 Dlocs_times = Vector{Float64}[]
 
 for Δt in times
-    params = @strdict data p N Δt
+    params = @strdict data p N Δt estimator
     output = produce_or_load_EVT(params, data; force = false)
     @unpack Δloc = output
     push!(Dlocs_times, Δloc)
@@ -76,6 +77,5 @@ for i in 1:2
     hidexdecorations!(axs[i]; grid = false)
 end
 
+wsave(plotsdir("paper", "evt_dataaspects_$(estimator)"), fig)
 fig
-
-wsave(plotsdir("paper", "evt_dataaspects"), fig)

@@ -8,12 +8,13 @@ rdspl(x::Real, n = 2) = round(x; digits=n)
 rdspl(x::AbstractVector, n = 2) = Tuple((round.(Float64.(x); sigdigits=n)))
 
 function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
-        qH = 1, qC = 2, tol = 0.25, offsets = zeros(length(Hs)),
+        qH = 1, qC = 2, tol = 0.25, tolH = tol, tolC = tol, offsets = zeros(length(Hs)),
         dimension_fit_H = linear_regression_fit_linalg,
-        dimension_fit_C = logarithmic_corrected_fit_lsqfit,
+        dimension_fit_C = linear_regression_fit_linalg,
+        region_choice = :largest, kwargs...
     )
 
-    fig, axs = axesgrid(2, 1; sharex = true)
+    fig, axs = axesgrid(2, 1; sharex = true, kwargs...)
 
     llines = []
     for j in eachindex(Hs)
@@ -30,7 +31,14 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         x, y = log.(eH), -H
         line = lines!(axs[1], x, y .+ z; alpha = 0.9)
         push!(llines, line)
-        region, d = linear_region(x, y; tol, warning = false, sat = 0.1)
+        # For entropy we always want the largest region: there is no change of slope
+        # if region_choice == :largest
+            region, d = linear_region(x, y; tol = tolH, warning = false, sat = 0.1)
+        # elseif region_choice == :last
+        #     lrs, tangents = linear_regions(x, y; tol)
+        #     region = lrs[end]
+        #     d = tangents[end]
+        # end
         Δ, Δ05, Δ95 = dimension_fit_H(x[region], y[region])
         Hlabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
         scatter!(axs[1], x[[region[1], region[end]]], y[[region[1], region[end]]] .+ z;
@@ -43,7 +51,13 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         i = findfirst(c -> c > 0, C)
         if !isnothing(i)
             x, y = log.(eC)[i:end], log.(C)[i:end]
-            region, d = linear_region(x, y; tol, warning = false)
+            if region_choice == :largest
+                region, d = linear_region(x, y; tol = tolC, warning = false)
+            elseif region_choice == :last
+                lrs, tangents = linear_regions(x, y; tol = tolC)
+                region = lrs[end]
+                d = tangents[end]
+            end
             Δ, Δ05, Δ95 = dimension_fit_C(x[region], y[region])
             Clabel = "$(rdspl(Δ05))-$(rdspl(Δ95))"
             lines!(axs[2], x, y .+ z; alpha = 0.9)

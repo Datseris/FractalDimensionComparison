@@ -15,7 +15,7 @@ push!(datas, :roessler_sphere)
 push!(labels, "Periodic+3Dsphere")
 
 push!(datas, :experimental_data)
-push!(labels, "vostok")
+push!(labels, "Vostok")
 
 push!(datas, :experimental_data)
 push!(labels, "nifty50")

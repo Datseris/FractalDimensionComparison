@@ -3,6 +3,7 @@ using DrWatson
 
 N = Int(1e5)
 p = 0.99
+estimator = :exp
 
 datas = Vector(undef, 6)
 labels = Vector{String}(undef, 6)
@@ -34,7 +35,7 @@ for i in 1:length(datas)
 
     # Here we simply pack all parameters into a dictionary
     # (other parameters are (probably) globals)
-    params = @strdict data p N
+    params = @strdict data N
 
     if data == :koch
         params["maxk"] = 7
@@ -44,7 +45,10 @@ for i in 1:length(datas)
     end
 
     # This is the main call that calculates everything
-    output = produce_or_load_EVT(params, data; force = false)
+    paramsevt = deepcopy(params)
+    paramsevt["estimator"] = estimator
+    paramsevt["p"] = p
+    output = produce_or_load_EVT(paramsevt, data; force = false)
     @unpack Δloc = output
     push!(Dlocs, Δloc)
 
@@ -60,7 +64,6 @@ for i in 1:length(datas)
     @show count(iszero, Cloc)
     filter!(!iszero, Cloc)
     push!(Clocs, Cloc)
-
 
 end
 
@@ -90,4 +93,4 @@ end
 
 display(fig)
 
-wsave(plotsdir("paper", "evt_pointwise"), fig)
+wsave(plotsdir("paper", "evt_pointwise_$(estimator)"), fig)

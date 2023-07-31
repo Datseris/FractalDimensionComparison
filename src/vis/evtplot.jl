@@ -16,7 +16,7 @@ function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = "";
         inner_legend = true,
         fig = ax.parent, legend_position = fig[0, :],
         xpositions = 1:length(Ds),
-        ticknum = 6
+        ticknum = 6, obtainer = mean,
     )
 
     ax.ylabel = L"\Delta^{(E)}"
@@ -44,12 +44,15 @@ function evtplot!(ax::Makie.Axis, Ds, labels, legendtitle = "";
         # lab = "$(rdspl(m, 2)) ± $(rdspl(σ)) ($(sigr(p, 1))%)"
         # lab = "($(rdspl(left, 2)), $(rdspl(right, 2))) [$(sigr(p, 1))%]"
         c = cutoffs[j]
-
         if c < Inf
             p = 100count(>(c), Dloc)/length(Dloc)
             lab = "$(rdspl(m, 2)) [$(round(Int, p))%]"
         else
             lab = "$(rdspl(m, 2))"
+        end
+
+        if obtainer == median
+            lab = "$(rdspl(median(Dloc), 2))"
         end
 
         horizontal = [i - 0.5 + gap/2, i + 0.5 - gap/2]

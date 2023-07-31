@@ -3,7 +3,7 @@ using DrWatson
 
 N = Int(10^5)
 p = 0.99
-
+estimator = :exp
 ds = range(2; step = 1, length = 6)
 
 datas = fill(:roessler_chaotic, 3)
@@ -17,7 +17,7 @@ Dlocs = Vector{Float64}[]
 
 for i in eachindex(datas)
     data = datas[i]
-    params = @strdict data p N
+    params = @strdict data p N estimator
     push!(params, parameters[i])
 
     output = produce_or_load_EVT(params, data; force = false)
@@ -35,4 +35,4 @@ fig = evtplot(Dlocs, labels, legendtitle;
 
 display(fig)
 
-wsave(plotsdir("paper", "evt_noise"), fig)
+wsave(plotsdir("paper", "evt_noise_$(estimator)"), fig)
