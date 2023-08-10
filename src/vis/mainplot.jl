@@ -1,4 +1,4 @@
-export mainplot, estimate_embedding_plot
+export mainplot, mainplot!, estimate_embedding_plot
 
 """
     rdspl(x, n = 2)
@@ -7,14 +7,20 @@ Round `x` to `n` sigdigits for display purposes.
 rdspl(x::Real, n = 2) = round(x; digits=n)
 rdspl(x::AbstractVector, n = 2) = Tuple((round.(Float64.(x); sigdigits=n)))
 
-function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
+function mainplot(args; kwargs...)
+    fig, axs = axesgrid(2, 1; sharex = true, kwargs...)
+    legendpos = fig[0, :]
+    mainplot!(axs, args...; kwargs..., legendpos)
+    rowgap!(fig.layout, 10) # spaces the legend table nicely
+    return fig
+end
+
+function mainplot!(axs, Hs, Cs, eHs, eCs, labels, legendtitle;
         qH = 1, qC = 2, tol = 0.25, tolH = tol, tolC = tol, offsets = zeros(length(Hs)),
         dimension_fit_H = linear_regression_fit_linalg,
         dimension_fit_C = linear_regression_fit_linalg,
-        region_choice = :largest, kwargs...
+        region_choice = :largest, legendpos = nothing, kwargs...
     )
-
-    fig, axs = axesgrid(2, 1; sharex = true, kwargs...)
 
     llines = []
     for j in eachindex(Hs)
@@ -31,7 +37,8 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
         x, y = log.(eH), -H
         line = lines!(axs[1], x, y .+ z; alpha = 0.9)
         push!(llines, line)
-        # For entropy we always want the largest region: there is no change of slope
+        # For entropy we always want the largest region because we have not
+        # observed any change of slope in neither q≠2 or having noise
         # if region_choice == :largest
             region, d = linear_region(x, y; tol = tolH, warning = false, sat = 0.1)
         # elseif region_choice == :last
@@ -80,14 +87,14 @@ function mainplot(Hs, Cs, eHs, eCs, labels, legendtitle;
     end
 
     # Make the informative legend
-    leg = Legend(fig[0, :], llines, labels, legendtitle;
-        nbanks=3, patchsize=(40f0, 20),
-    )
-    rowgap!(fig.layout, 10)
-    space_out_legend!(leg)
-    space_out_legend!(leg) # not sure why I have to trigger this twice...
-    display(fig) # in this project we always want to display the created figure
-    return fig
+    if !isnothing(legendpos)
+        leg = Legend(legendpos, llines, labels, legendtitle;
+            nbanks=3, patchsize=(40f0, 20),
+        )
+        space_out_legend!(leg)
+        space_out_legend!(leg) # not sure why I have to trigger this twice...
+    end
+    return
 end
 
 function estimate_embedding_plot(x, t = "")

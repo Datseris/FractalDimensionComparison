@@ -15,7 +15,7 @@ qC = 2
 z = 1
 
 push!(datas, :lorenz96_nonstationary)
-push!(labels, "non-stat. Lorenz96")
+push!(labels, "non-st. Lorenz96")
 
 push!(datas, :roessler_sphere)
 push!(labels, "Periodic+3Dsphere")
@@ -27,10 +27,10 @@ push!(datas, :experimental_data)
 push!(labels, "nifty50")
 
 push!(datas, :lorenz96_chaotic)
-push!(labels, "Lorenz96 (D=32)")
+push!(labels, "1/4 Lorenz96 (D=32)")
 
 push!(datas, :ksiva)
-push!(labels, "K-Sivashinsky")
+push!(labels, "1/4 Kur.-Sivash.")
 
 Dlocs = Vector{Float64}[]
 for i in eachindex(datas)

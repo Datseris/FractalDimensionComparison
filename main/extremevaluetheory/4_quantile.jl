@@ -13,7 +13,7 @@ estimator = :exp
 N = Int(1e5)
 title_ps = "varying p: fixed N = $(N)"
 ps = [0.95, 0.999, 0.9999]
-labels_ps = ["$(system), p=$(p)" for system in ("lorenz96", "towel") for p in ps]
+labels_ps = ["$(system), p=$(p)" for system in ("Lorenz96", "towel") for p in ps]
 Dlocs_ps = Vector{Float64}[]
 
 for data in (data1, data2)
@@ -34,7 +34,7 @@ end
 # 2nd subplot: fixed N(1-p)
 set = 1000  # fixed product N p
 ps = [0.99, 0.95, 0.9] # values of p to iterate over
-labels_set = ["$(system), p=$(p)" for system in ("lorenz96", "towel") for p in ps]
+labels_set = ["$(system), p=$(p)" for system in ("Lorenz96", "towel") for p in ps]
 title_set = "varying p: fixed N(1-p) = $(round(Int, set))"
 Dlocs_set = Vector{Float64}[]
 

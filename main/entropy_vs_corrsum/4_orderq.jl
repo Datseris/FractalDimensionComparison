@@ -6,6 +6,7 @@ N = Int(10^5)
 systems = [:koch, :henon_chaotic]
 slabels = ["Koch", "Hénon"]
 qs = 2:4
+# qs = Real[2, 2.01, 4] # test that q=2 and q=2.01 give identical results
 Cmethod = "standard" # bueno or standard. Decides εmax for correlation sum.
 
 eHs, eCs, Hs, Cs = [Vector{Float64}[] for i in 1:4]
@@ -18,8 +19,8 @@ for data in systems
         params = @strdict N qH qC data
         if data == :standardmap_chaotic
             params["k"] = 1.0
-        # elseif data == :henon_chaotic
-            # params["z"] = -4
+        elseif data == :lorenz96_chaotic
+            params["D"] = 8
         end
         params["theiler"] = 0
         if Cmethod ≠ "standard"
@@ -42,6 +43,7 @@ fig = mainplot(
     qH = "q", qC = "q", tol = 0.25,
     offsets = range(0; length = 6, step = 1.5),
     dimension_fit_C = linear_regression_fit_linalg,
+    region_choice = :last,
 )
 
 wsave(plotsdir("paper", "orderq"), fig)
